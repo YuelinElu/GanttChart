@@ -1,0 +1,443 @@
+Tasks,Start Date,Completion,Length,Color
+Pre-Kick Off Plan,2025-06-02 08:00:00,2025-10-08 16:00:00,128.33333333340124,Black Outline
+Client Onboarding,2025-06-02 08:00:00,2025-07-04 16:00:00,32.33333333340124,Black
+Review Existing Case Studies,2025-06-02 08:00:00,2025-06-20 16:00:00,18.333333333401242,Orange
+List Initial Target Benefit Ideas,2025-06-23 08:00:00,2025-07-04 16:00:00,11.333333333401242,Orange
+Set Up project On MS Cloud,2025-06-02 08:00:00,2025-06-16 16:00:00,14.333333333401242,Orange
+Develop Scope,2025-06-02 08:00:00,2025-09-18 16:00:00,108.33333333340124,Black
+Preparation,2025-06-02 08:00:00,2025-06-27 16:00:00,25.333333333401242,Grey
+Research & Review Client Process,2025-06-02 08:00:00,2025-06-27 16:00:00,25.333333333401242,Orange
+Determine most viable sites,2025-06-20 08:00:00,2025-06-26 16:00:00,6.333333333401242,Orange
+Determine Use Cases,2025-07-21 08:00:00,2025-08-01 16:00:00,11.333333333401242,Orange
+Profit & Loss (P&L),2025-08-04 08:00:00,2025-08-28 16:00:00,24.333333333401242,Grey
+P&L - 1st Draft,2025-08-04 08:00:00,2025-08-13 16:00:00,9.333333333401242,Orange
+P&L - Review,2025-08-14 08:00:00,2025-08-27 16:00:00,13.333333333401242,Orange
+P&L - Value Optimization Analysis,2025-08-28 08:00:00,2025-08-28 16:00:00,0.33333333340124227,Orange
+P&L - Finalized,2025-08-28 08:00:00,2025-08-28 16:00:00,0.33333333340124227,Orange
+Statement of Work (SOW),2025-08-04 08:00:00,2025-09-03 16:00:00,30.333333333401242,Grey
+SOW - 1st Draft,2025-08-04 08:00:00,2025-08-21 16:00:00,17.333333333401242,Orange
+SOW - Review Draft with CS,2025-08-22 08:00:00,2025-08-27 16:00:00,5.333333333401242,Orange
+SOW - Format & Update Design Elements,2025-08-28 08:00:00,2025-08-29 16:00:00,1.3333333334012423,Orange
+SOW - Confirm Indicative IT Architecture,2025-08-28 08:00:00,2025-08-29 16:00:00,1.3333333334012423,Orange
+SOW - Finalized,2025-09-01 08:00:00,2025-09-03 16:00:00,2.3333333334012423,Orange
+Create DRT,2025-06-20 08:00:00,2025-09-10 16:00:00,82.33333333340124,Grey
+DRT - 1st Draft,2025-06-20 08:00:00,2025-06-20 16:00:00,0.33333333340124227,Orange
+DRT - Review,2025-09-04 08:00:00,2025-09-08 16:00:00,4.333333333401242,Orange
+Develop Data Source System Roadmap,2025-09-09 08:00:00,2025-09-10 16:00:00,1.3333333334012423,Orange
+DRT - Finalized,2025-09-09 08:00:00,2025-09-09 16:00:00,0.33333333340124227,Orange
+Executive Presentation (EP),2025-08-04 08:00:00,2025-09-18 16:00:00,45.33333333340124,Grey
+EP - 1st Draft,2025-08-04 08:00:00,2025-08-11 16:00:00,7.333333333401242,Orange
+EP - Review Draft with CS,2025-09-04 08:00:00,2025-09-10 16:00:00,6.333333333401242,Orange
+EP - Update Design Elements,2025-09-11 08:00:00,2025-09-11 16:00:00,0.33333333340124227,Orange
+EP - Final Draft,2025-09-12 08:00:00,2025-09-18 16:00:00,6.333333333401242,Orange
+Initiate Benefit Measurement Workstream,2025-08-07 08:00:00,2025-10-08 16:00:00,62.33333333340124,Black
+Arrange briefing call with EPA,2025-08-07 08:00:00,2025-08-07 16:00:00,0.33333333340124227,Orange
+Outline rough case studies,2025-09-02 08:00:00,2025-09-10 16:00:00,8.333333333401242,Orange
+Begin drafting BCMS using previous examples,2025-09-02 08:00:00,2025-09-04 16:00:00,2.3333333334012423,Orange
+Work with Legal team to draft the final BCMs,2025-09-05 08:00:00,2025-09-15 16:00:00,10.333333333401242,Orange
+Liaise with Legal to Complete Drafts,2025-09-05 08:00:00,2025-10-08 16:00:00,33.33333333340124,Orange
+IT Architecture Discussion,2025-07-31 08:00:00,2025-09-25 16:00:00,56.33333333340124,Black
+"Arrange call with Sam Babler, if required",2025-07-31 08:00:00,2025-07-31 16:00:00,0.33333333340124227,Orange
+Prepare IT Architecture Diagram,2025-09-01 08:00:00,2025-09-05 16:00:00,4.333333333401242,Orange
+Publish IT Architecture diagram to Client,2025-09-10 08:00:00,2025-09-25 16:00:00,15.333333333401242,Orange
+External POV and Live Test Preview Call,2025-09-04 08:00:00,2025-09-25 16:00:00,21.333333333401242,Black
+Submit Security Questionnaire,2025-09-04 08:00:00,2025-09-04 16:00:00,0.33333333340124227,Orange
+Security Questionnaire - Client Approval,2025-09-10 08:00:00,2025-09-25 16:00:00,15.333333333401242,Orange
+Create Kick-Off Planning Presentation,2025-09-12 08:00:00,2025-09-23 16:00:00,11.333333333401242,Orange
+Update Kick-Off Presentation Design Elements,2025-09-24 08:00:00,2025-09-25 16:00:00,1.3333333334012423,Orange
+Confirm Kick-Off Meeting Date,2025-09-24 08:00:00,2025-09-24 16:00:00,0.33333333340124227,Orange
+POV Kick-Off,2025-09-24 08:00:00,2025-12-19 17:00:00,86.375,Black Outline
+External Kick-Off Meeting,2025-10-28 08:00:00,2025-12-10 17:00:00,43.375,Black
+Hold External Kick-off Meeting,2025-10-28 08:00:00,2025-10-28 16:00:00,0.33333333340124227,Orange
+Confirm data sharing method and location,2025-10-29 08:00:00,2025-10-29 16:00:00,0.33333333340124227,Orange
+Identify server resources,2025-10-29 08:00:00,2025-10-29 16:00:00,0.33333333340124227,Orange
+Ensure Elutions equipment is ready,2025-10-30 08:00:00,2025-10-30 16:00:00,0.33333333340124227,Orange
+Review DRT with client,2025-10-29 08:00:00,2025-12-10 17:00:00,42.375,Orange
+Confirm client weekly meeting time,2025-10-29 08:00:00,2025-10-29 16:00:00,0.33333333340124227,Orange
+POV status Update,2025-10-29 08:00:00,2025-11-04 17:00:00,6.375,Orange
+Maestro Demo for wider project team (Optional),2025-10-29 08:00:00,2025-10-29 16:00:00,0.33333333340124227,Orange
+Kick-Off Call Internal Washup,2025-10-29 08:00:00,2025-10-30 16:00:00,1.3333333334012423,Black
+Review Meeting Actions with Elutions team,2025-10-29 08:00:00,2025-10-29 16:00:00,0.33333333340124227,Orange
+Schedule placeholder for internal weekly calls,2025-10-30 08:00:00,2025-10-30 16:00:00,0.33333333340124227,Orange
+Client Workstream Owner Introductions,2025-12-11 09:00:00,2025-12-19 17:00:00,8.333333333299379,Black
+Introductions to client systems and IT resource,2025-12-11 09:00:00,2025-12-17 17:00:00,6.333333333299379,Orange
+Send Integration Questionaire to Client,2025-12-18 09:00:00,2025-12-18 17:00:00,0.33333333329937886,Orange
+Receive and Review Integration Questionaire,2025-12-19 09:00:00,2025-12-19 17:00:00,0.33333333329937886,Orange
+Request VPN Connection,2025-12-18 09:00:00,2025-12-18 17:00:00,0.33333333329937886,Orange
+Save contract details to OneNote,2025-12-11 09:00:00,2025-12-11 17:00:00,0.33333333329937886,Orange
+Introductions to client owners for each workstream,2025-12-11 09:00:00,2025-12-17 17:00:00,6.333333333299379,Orange
+Data Science Preparation,2025-09-25 08:00:00,2025-09-26 16:00:00,1.3333333334012423,Black
+KT w/ DS for use cases,2025-09-25 08:00:00,2025-09-25 16:00:00,0.33333333340124227,Orange
+Familiarize & Practice Modeling,2025-09-26 08:00:00,2025-09-26 16:00:00,0.33333333340124227,Orange
+POV Governance,2025-09-24 08:00:00,2025-11-04 17:00:00,41.375,Black
+Internal Weekly Call,2025-10-31 08:00:00,2025-10-31 16:00:00,0.33333333340124227,Grey
+Publish Agenda,2025-10-31 08:00:00,2025-10-31 16:00:00,0.33333333340124227,Orange
+Confirm Attendees,2025-10-31 08:00:00,2025-10-31 16:00:00,0.33333333340124227,Orange
+Weekly Client Call,2025-11-03 09:00:00,2025-11-04 17:00:00,1.3333333332993789,Grey
+Publish Weekly Client Call Agenda,2025-11-03 09:00:00,2025-11-03 17:00:00,0.33333333329937886,Orange
+Confirm Weekly Client Call Attendees,2025-11-04 09:00:00,2025-11-04 17:00:00,0.33333333329937886,Orange
+Contractual Obligations,2025-09-25 08:00:00,2025-10-09 16:00:00,14.333333333401242,Grey
+Share Contractual Obligations,2025-10-09 08:00:00,2025-10-09 16:00:00,0.33333333340124227,Orange
+Establish processes for ongoing contractual obligations,2025-09-25 08:00:00,2025-10-09 16:00:00,14.333333333401242,Orange
+Establish Exec Review Framework,2025-09-24 08:00:00,2025-10-10 16:00:00,16.333333333401242,Grey
+Create Planner Goals?,2025-09-24 08:00:00,2025-10-10 16:00:00,16.333333333401242,Orange
+Data Collection & Benefit Measurement,2025-12-11 09:00:00,2026-01-09 17:00:00,29.33333333329938,Black Outline
+Historical Data Collection,2025-12-11 09:00:00,2026-01-09 17:00:00,29.33333333329938,Black
+Data Collection,2025-12-11 09:00:00,2026-01-01 17:00:00,21.33333333329938,Orange
+Complete historical data collection,2026-01-02 09:00:00,2026-01-02 17:00:00,0.33333333329937886,Orange
+Review of historical data,2026-01-05 09:00:00,2026-01-05 17:00:00,0.33333333329937886,Orange
+Creating scripts for historical data transfer,2026-01-06 09:00:00,2026-01-09 17:00:00,3.333333333299379,Orange
+Store data in OneDrive,2026-01-06 09:00:00,2026-01-06 17:00:00,0.33333333329937886,Orange
+Update DRT with receipt of data,2026-01-06 09:00:00,2026-01-06 17:00:00,0.33333333329937886,Orange
+Portal Development,2025-06-02 08:00:00,2026-01-05 17:00:00,217.375,Black Outline
+Maestro Screen Design Document,2025-09-19 08:00:00,2025-10-15 16:00:00,26.333333333401242,Black
+Outline changes for existing Maestro screens,2025-09-19 08:00:00,2025-09-23 16:00:00,4.333333333401242,Orange
+Create mock ups for existing screens,2025-09-24 08:00:00,2025-10-07 16:00:00,13.333333333401242,Orange
+Mock up approval,2025-10-08 08:00:00,2025-10-08 16:00:00,0.33333333340124227,Orange
+Share Mock Ups to R&D,2025-10-09 08:00:00,2025-10-09 16:00:00,0.33333333340124227,Orange
+Outline where object trees are required,2025-09-26 08:00:00,2025-10-15 16:00:00,19.333333333401242,Orange
+Provide import files where possible,2025-09-19 08:00:00,2025-10-01 16:00:00,12.333333333401242,Orange
+Develop POV Portal,2025-06-02 08:00:00,2026-01-05 17:00:00,217.375,Black
+IES Import POV Info,2025-10-02 08:00:00,2025-10-13 16:00:00,11.333333333401242,Orange
+DS  Import POV info,2026-01-05 09:00:00,2026-01-05 17:00:00,0.33333333329937886,Orange
+Develop new additional dashboards,2025-10-16 08:00:00,2025-10-29 16:00:00,13.333333333401242,Orange
+Develop process centre,2025-10-16 08:00:00,2025-11-04 17:00:00,19.375,Orange
+Create trend viewer,2025-06-02 08:00:00,2025-06-03 16:00:00,1.3333333334012423,Orange
+Develop benefit centre,2025-10-16 08:00:00,2025-11-04 17:00:00,19.375,Orange
+Create object tree(s),2025-10-16 08:00:00,2025-10-16 16:00:00,0.33333333340124227,Orange
+Develop impact centre,2025-10-16 08:00:00,2025-11-04 17:00:00,19.375,Orange
+Review existing dashboards for vertical,2025-10-30 08:00:00,2025-10-30 16:00:00,0.33333333340124227,Orange
+Complete development of POV portal,2025-11-05 09:00:00,2025-11-05 17:00:00,0.33333333329937886,Orange
+Series 1 IBA Development,2026-01-12 09:00:00,2026-03-24 16:00:00,71.29166666670062,Black Outline
+Data Qualification,2026-01-12 09:00:00,2026-01-19 17:00:00,7.333333333299379,Black
+Steam Network Data Qualification,2026-01-12 09:00:00,2026-01-19 17:00:00,7.333333333299379,Grey
+Steam Network - Establish Data Connection,2026-01-12 09:00:00,2026-01-12 17:00:00,0.33333333329937886,Orange
+Steam Network - Validate Data,2026-01-13 09:00:00,2026-01-13 17:00:00,0.33333333329937886,Orange
+Steam Network - Check Data Availability,2026-01-14 09:00:00,2026-01-16 17:00:00,2.333333333299379,Orange
+Steam Network - Mark Receipt of Each Data Source,2026-01-19 09:00:00,2026-01-19 17:00:00,0.33333333329937886,Orange
+Fuel Balance Data Qualification,2026-01-12 09:00:00,2026-01-19 17:00:00,7.333333333299379,Grey
+Fuel - Establish Data Connection,2026-01-12 09:00:00,2026-01-12 17:00:00,0.33333333329937886,Orange
+Fuel - Validate Data,2026-01-13 09:00:00,2026-01-13 17:00:00,0.33333333329937886,Orange
+Fuel - Check Data Availability,2026-01-14 09:00:00,2026-01-16 17:00:00,2.333333333299379,Orange
+Fuel - Mark Receipt of Each Data Source,2026-01-19 09:00:00,2026-01-19 17:00:00,0.33333333329937886,Orange
+Production Yield Data Qualification,2026-01-12 09:00:00,2026-01-19 17:00:00,7.333333333299379,Grey
+Yield - Establish Data Connection,2026-01-12 09:00:00,2026-01-12 17:00:00,0.33333333329937886,Orange
+Yield - Validate Data,2026-01-13 09:00:00,2026-01-13 17:00:00,0.33333333329937886,Orange
+Yield - Check Data Availability,2026-01-14 09:00:00,2026-01-16 17:00:00,2.333333333299379,Orange
+Yield - Mark Receipt of Each Data Source,2026-01-19 09:00:00,2026-01-19 17:00:00,0.33333333329937886,Orange
+"Digital Twin, Mapping and Prediction",2026-01-20 09:00:00,2026-02-04 17:00:00,15.333333333299379,Black
+Steam Network Digital Twin,2026-01-20 09:00:00,2026-02-03 17:00:00,14.333333333299379,Grey
+Steam - Determine relevant tags & target,2026-01-20 09:00:00,2026-01-22 17:00:00,2.333333333299379,Orange
+Steam - DS KT session,2026-01-23 09:00:00,2026-01-23 17:00:00,0.33333333329937886,Orange
+Steam - Label tags for the models,2026-01-23 09:00:00,2026-01-27 17:00:00,4.333333333299379,Orange
+Steam - Create Bounds & Changing Rates,2026-01-28 09:00:00,2026-01-28 17:00:00,0.33333333329937886,Orange
+Steam - Generate model,2026-01-29 09:00:00,2026-01-29 17:00:00,0.33333333329937886,Orange
+Steam - Ensure correct formatting and that data is uploaded to Maestro,2026-01-30 09:00:00,2026-02-03 17:00:00,4.333333333299379,Orange
+Fuel Balance Digital Twin,2026-01-20 09:00:00,2026-02-03 17:00:00,14.333333333299379,Grey
+Fuel - Determine relevant tags & target,2026-01-20 09:00:00,2026-01-22 17:00:00,2.333333333299379,Orange
+Fuel - DS KT session,2026-01-23 09:00:00,2026-01-23 17:00:00,0.33333333329937886,Orange
+Fuel - Label tags for the models,2026-01-23 09:00:00,2026-01-27 17:00:00,4.333333333299379,Orange
+Fuel - Create Bounds & Changing Rates,2026-01-28 09:00:00,2026-01-28 17:00:00,0.33333333329937886,Orange
+Fuel - Generate model,2026-01-29 09:00:00,2026-01-29 17:00:00,0.33333333329937886,Orange
+Fuel - Ensure correct formatting and that data is uploaded to Maestro,2026-01-30 09:00:00,2026-02-03 17:00:00,4.333333333299379,Orange
+Production Yield Digital Twin,2026-01-20 09:00:00,2026-02-03 17:00:00,14.333333333299379,Grey
+Yield - Determine relevant tags & target,2026-01-20 09:00:00,2026-01-22 17:00:00,2.333333333299379,Orange
+Yield - DS KT session,2026-01-23 09:00:00,2026-01-23 17:00:00,0.33333333329937886,Orange
+Yield - Label tags for the models,2026-01-23 09:00:00,2026-01-27 17:00:00,4.333333333299379,Orange
+Yield - Create Bounds & Changing Rates,2026-01-28 09:00:00,2026-01-28 17:00:00,0.33333333329937886,Orange
+Yield - Generate model,2026-01-29 09:00:00,2026-01-29 17:00:00,0.33333333329937886,Orange
+Yield - Ensure correct formatting and that data is uploaded to Maestro,2026-01-30 09:00:00,2026-02-03 17:00:00,4.333333333299379,Orange
+Stack Series Models,2026-02-04 09:00:00,2026-02-04 17:00:00,0.33333333329937886,Orange
+Benefit Quantification,2026-01-30 09:00:00,2026-02-11 17:00:00,12.333333333299379,Black
+Steam Network Benefit Quantification,2026-01-30 09:00:00,2026-02-11 17:00:00,12.333333333299379,Grey
+Steam - Establish benefit measurement methodology,2026-01-30 09:00:00,2026-02-03 17:00:00,4.333333333299379,Orange
+Steam - Consult with EPA to learn implementation,2026-02-04 09:00:00,2026-02-04 17:00:00,0.33333333329937886,Orange
+Steam - Create implementation framework,2026-02-05 09:00:00,2026-02-11 17:00:00,6.333333333299379,Orange
+Fuel Balance Benefit Quantification,2026-01-30 09:00:00,2026-02-11 17:00:00,12.333333333299379,Grey
+Fuel - Establish benefit measurement methodology,2026-01-30 09:00:00,2026-02-03 17:00:00,4.333333333299379,Orange
+Fuel - Consult with EPA to learn implementation,2026-02-04 09:00:00,2026-02-04 17:00:00,0.33333333329937886,Orange
+Fuel - Create implementation framework,2026-02-05 09:00:00,2026-02-11 17:00:00,6.333333333299379,Orange
+Production Yield Benefit Quantification,2026-01-30 09:00:00,2026-02-11 17:00:00,12.333333333299379,Grey
+Yield - Establish benefit measurement methodology,2026-01-30 09:00:00,2026-02-03 17:00:00,4.333333333299379,Orange
+Yield - Consult with EPA to learn implementation,2026-02-04 09:00:00,2026-02-04 17:00:00,0.33333333329937886,Orange
+Yield - Create implementation framework,2026-02-05 09:00:00,2026-02-11 17:00:00,6.333333333299379,Orange
+Develop Case Study & Review,2026-02-12 09:00:00,2026-03-10 16:00:00,26.29166666670062,Black
+Steam Network Case Study,2026-02-12 09:00:00,2026-03-10 16:00:00,26.29166666670062,Grey
+Steam Case Study - Share with CS,2026-02-12 09:00:00,2026-03-03 17:00:00,19.33333333329938,Orange
+Steam Case Study - Import,2026-03-04 09:00:00,2026-03-05 17:00:00,1.3333333332993789,Orange
+Steam Case Study - Check & Proofread,2026-03-06 09:00:00,2026-03-10 16:00:00,4.291666666700621,Orange
+Fuel Balance Case Study,2026-02-12 09:00:00,2026-03-10 16:00:00,26.29166666670062,Grey
+Fuel Case Study - Share content with CS,2026-02-12 09:00:00,2026-03-03 17:00:00,19.33333333329938,Orange
+Fuel Case Study - Import,2026-03-04 09:00:00,2026-03-05 17:00:00,1.3333333332993789,Orange
+Fuel Case Study - Check & Proofread,2026-03-06 09:00:00,2026-03-10 16:00:00,4.291666666700621,Orange
+Production Yield Case Study,2026-02-12 09:00:00,2026-03-10 16:00:00,26.29166666670062,Grey
+Yield Case Study - Share content with CS,2026-02-12 09:00:00,2026-03-03 17:00:00,19.33333333329938,Orange
+Yield Case Study - Import,2026-03-04 09:00:00,2026-03-05 17:00:00,1.3333333332993789,Orange
+Yield Case Study - Check & Proofread,2026-03-06 09:00:00,2026-03-10 16:00:00,4.291666666700621,Orange
+Executive Review of IBA Results,2026-03-11 08:00:00,2026-03-17 16:00:00,6.333333333401242,Black
+Steam Network IBA Review,2026-03-11 08:00:00,2026-03-17 16:00:00,6.333333333401242,Grey
+Steam - Exec approval of financial benefit,2026-03-11 08:00:00,2026-03-17 16:00:00,6.333333333401242,Orange
+Fuel Balance IBA Review,2026-03-11 08:00:00,2026-03-17 16:00:00,6.333333333401242,Grey
+Fuel - Exec approval of financial benefit,2026-03-11 08:00:00,2026-03-17 16:00:00,6.333333333401242,Orange
+Production Yield IBA Review,2026-03-11 08:00:00,2026-03-17 16:00:00,6.333333333401242,Grey
+Yield - Exec approval of financial benefit,2026-03-11 08:00:00,2026-03-17 16:00:00,6.333333333401242,Orange
+Develop IBA Deck,2026-03-18 08:00:00,2026-03-24 16:00:00,6.333333333401242,Black
+Steam Network IBA Deck,2026-03-18 08:00:00,2026-03-20 16:00:00,2.3333333334012423,Grey
+Steam Deck - Develop design framework,2026-03-18 08:00:00,2026-03-20 16:00:00,2.3333333334012423,Orange
+Steam Deck - Develop storyboard,2026-03-18 08:00:00,2026-03-20 16:00:00,2.3333333334012423,Orange
+Fuel Balance IBA Deck,2026-03-18 08:00:00,2026-03-20 16:00:00,2.3333333334012423,Grey
+Fuel Deck - Develop design framework,2026-03-18 08:00:00,2026-03-20 16:00:00,2.3333333334012423,Orange
+Fuel Deck - Develop storyboard,2026-03-18 08:00:00,2026-03-20 16:00:00,2.3333333334012423,Orange
+Production Yield IBA Deck,2026-03-18 08:00:00,2026-03-20 16:00:00,2.3333333334012423,Grey
+Yield Deck - Develop design framework,2026-03-18 08:00:00,2026-03-20 16:00:00,2.3333333334012423,Orange
+Yield Deck - Develop storyboard,2026-03-18 08:00:00,2026-03-20 16:00:00,2.3333333334012423,Orange
+Series 1 - Complete IBA Deck,2026-03-23 08:00:00,2026-03-23 16:00:00,0.33333333340124227,Orange
+Series 1 - IBA Deck - Executive Review,2026-03-24 08:00:00,2026-03-24 16:00:00,0.33333333340124227,Orange
+Series 1 - POV Portal - Executive Review,2026-03-18 08:00:00,2026-03-18 16:00:00,0.33333333340124227,Orange
+Series 2 IBA Development,2026-03-25 08:00:00,2026-06-24 16:00:00,91.33333333340124,Black Outline
+Data Qualification,2026-03-25 08:00:00,2026-05-29 16:00:00,65.33333333340124,Black
+Feedstock Utilization Data Qualification,2026-03-25 08:00:00,2026-04-03 16:00:00,9.333333333401242,Grey
+Feedstock - Establish Data Connection,2026-03-25 08:00:00,2026-03-25 16:00:00,0.33333333340124227,Orange
+Feedstock - Validate Data,2026-03-26 08:00:00,2026-03-30 16:00:00,4.333333333401242,Orange
+Feedstock - Check Data Availability,2026-03-31 08:00:00,2026-04-02 16:00:00,2.3333333334012423,Orange
+Feedstock - Mark Receipt of Each Data Source,2026-04-03 08:00:00,2026-04-03 16:00:00,0.33333333340124227,Orange
+Product Quality Data Qualification,2026-05-26 08:00:00,2026-05-29 16:00:00,3.3333333334012423,Grey
+Quality - Establish Data Connection,2026-05-26 08:00:00,2026-05-26 16:00:00,0.33333333340124227,Orange
+Quality - Validate Data,2026-05-27 08:00:00,2026-05-27 16:00:00,0.33333333340124227,Orange
+Quality - Check Data Availability,2026-05-28 08:00:00,2026-05-28 16:00:00,0.33333333340124227,Orange
+Quality - Mark Receipt of Each Data Source,2026-05-29 08:00:00,2026-05-29 16:00:00,0.33333333340124227,Orange
+Product Transition Data Qualification,2026-05-26 08:00:00,2026-05-29 16:00:00,3.3333333334012423,Grey
+Product Transition - Establish Data Connection,2026-05-26 08:00:00,2026-05-26 16:00:00,0.33333333340124227,Orange
+Product Transition - Validate Data,2026-05-27 08:00:00,2026-05-27 16:00:00,0.33333333340124227,Orange
+Product Transition - Check Data Availability,2026-05-28 08:00:00,2026-05-28 16:00:00,0.33333333340124227,Orange
+Product Transition - Mark Receipt of Each Data Source,2026-05-29 08:00:00,2026-05-29 16:00:00,0.33333333340124227,Orange
+"Digital Twin, Mapping and Prediction",2026-04-06 08:00:00,2026-06-16 16:00:00,71.33333333340124,Black
+Feedstock Utilization Digital Twin,2026-04-06 08:00:00,2026-04-20 16:00:00,14.333333333401242,Grey
+Feedstock - Determine relevant tags & target,2026-04-06 08:00:00,2026-04-08 16:00:00,2.3333333334012423,Orange
+Feedstock - DS KT session,2026-04-09 08:00:00,2026-04-09 16:00:00,0.33333333340124227,Orange
+Feedstock - Label tags for the models,2026-04-09 08:00:00,2026-04-13 16:00:00,4.333333333401242,Orange
+Feedstock - Create Bounds & Changing Rates,2026-04-14 08:00:00,2026-04-14 16:00:00,0.33333333340124227,Orange
+Feedstock - Generate model,2026-04-15 08:00:00,2026-04-15 16:00:00,0.33333333340124227,Orange
+Feedstock - Ensure correct formatting and that data is uploaded to Maestro,2026-04-16 08:00:00,2026-04-20 16:00:00,4.333333333401242,Orange
+Product Quality Digital Twin,2026-06-01 08:00:00,2026-06-15 16:00:00,14.333333333401242,Grey
+Quality - Determine relevant tags & target,2026-06-01 08:00:00,2026-06-03 16:00:00,2.3333333334012423,Orange
+Quality - DS KT session,2026-06-04 08:00:00,2026-06-04 16:00:00,0.33333333340124227,Orange
+Quality - Label tags for the models,2026-06-04 08:00:00,2026-06-08 16:00:00,4.333333333401242,Orange
+Quality - Create Bounds & Changing Rates,2026-06-09 08:00:00,2026-06-09 16:00:00,0.33333333340124227,Orange
+Quality - Generate model,2026-06-10 08:00:00,2026-06-10 16:00:00,0.33333333340124227,Orange
+Quality - Ensure correct formatting and that data is uploaded to Maestro,2026-06-11 08:00:00,2026-06-15 16:00:00,4.333333333401242,Orange
+Product Transition Digital Twin,2026-06-01 08:00:00,2026-06-15 16:00:00,14.333333333401242,Grey
+Product Transition - Determine relevant tags & target,2026-06-01 08:00:00,2026-06-03 16:00:00,2.3333333334012423,Orange
+Product Transition - DS KT session,2026-06-04 08:00:00,2026-06-04 16:00:00,0.33333333340124227,Orange
+Product Transition - Label tags for the models,2026-06-04 08:00:00,2026-06-08 16:00:00,4.333333333401242,Orange
+Product Transition - Create Bounds & Changing Rates,2026-06-09 08:00:00,2026-06-09 16:00:00,0.33333333340124227,Orange
+Product Transition - Generate model,2026-06-10 08:00:00,2026-06-10 16:00:00,0.33333333340124227,Orange
+Product Transition - Ensure correct formatting and that data is uploaded to Maestro,2026-06-11 08:00:00,2026-06-15 16:00:00,4.333333333401242,Orange
+Stack Series LSTM Models,2026-06-16 08:00:00,2026-06-16 16:00:00,0.33333333340124227,Orange
+Benefit Quantification,2026-04-16 08:00:00,2026-06-15 16:00:00,60.33333333340124,Black
+Feedstock Utilization Benefit Quantification,2026-04-16 08:00:00,2026-04-28 16:00:00,12.333333333401242,Grey
+Feedstock - Establish benefit measurement methodology,2026-04-16 08:00:00,2026-04-20 16:00:00,4.333333333401242,Orange
+Feedstock - Consult with EPA to learn implementation,2026-04-21 08:00:00,2026-04-21 16:00:00,0.33333333340124227,Orange
+Feedstock - Create implementation framework,2026-04-22 08:00:00,2026-04-28 16:00:00,6.333333333401242,Orange
+Product Quality Benefit Quantification,2026-06-11 08:00:00,2026-06-15 16:00:00,4.333333333401242,Grey
+Quality - Establish benefit measurement methodology,2026-06-11 08:00:00,2026-06-11 16:00:00,0.33333333340124227,Orange
+Quality - Consult with EPA to learn implementation,2026-06-12 08:00:00,2026-06-12 16:00:00,0.33333333340124227,Orange
+Quality - Create implementation framework,2026-06-15 08:00:00,2026-06-15 16:00:00,0.33333333340124227,Orange
+Product Transition Benefit Quantification,2026-06-11 08:00:00,2026-06-15 16:00:00,4.333333333401242,Grey
+Product Transition - Establish benefit measurement methodology,2026-06-11 08:00:00,2026-06-11 16:00:00,0.33333333340124227,Orange
+Product Transition - Consult with EPA to learn implementation,2026-06-12 08:00:00,2026-06-12 16:00:00,0.33333333340124227,Orange
+Product Transition - Create implementation framework,2026-06-15 08:00:00,2026-06-15 16:00:00,0.33333333340124227,Orange
+Develop Case Study & Review,2026-04-29 08:00:00,2026-06-18 16:00:00,50.33333333340124,Black
+Feedstock Utilization Case Study,2026-04-29 08:00:00,2026-05-25 16:00:00,26.333333333401242,Grey
+Feedstock Case Study - Share with CS,2026-04-29 08:00:00,2026-05-18 16:00:00,19.333333333401242,Orange
+Feedstock Case Study - Import,2026-05-19 08:00:00,2026-05-20 16:00:00,1.3333333334012423,Orange
+Feedstock Case Study - Check & Proofread,2026-05-21 08:00:00,2026-05-25 16:00:00,4.333333333401242,Orange
+Product Quality Case Study,2026-06-16 08:00:00,2026-06-18 16:00:00,2.3333333334012423,Grey
+Quality Case Study - Share content with CS,2026-06-16 08:00:00,2026-06-16 16:00:00,0.33333333340124227,Orange
+Quality Case Study - Import,2026-06-17 08:00:00,2026-06-17 16:00:00,0.33333333340124227,Orange
+Quality Case Study - Check & Proofread,2026-06-18 08:00:00,2026-06-18 16:00:00,0.33333333340124227,Orange
+Product Transition Case Study,2026-06-16 08:00:00,2026-06-18 16:00:00,2.3333333334012423,Grey
+Product Transition Case Study - Share content with CS,2026-06-16 08:00:00,2026-06-16 16:00:00,0.33333333340124227,Orange
+Product Transition Case Study - Import,2026-06-17 08:00:00,2026-06-17 16:00:00,0.33333333340124227,Orange
+Product Transition Case Study - Check & Proofread,2026-06-18 08:00:00,2026-06-18 16:00:00,0.33333333340124227,Orange
+Executive Review of IBA Results,2026-05-26 08:00:00,2026-06-19 16:00:00,24.333333333401242,Black
+Feedstock Utilization IBA Review,2026-05-26 08:00:00,2026-06-01 16:00:00,6.333333333401242,Grey
+Feedstock - Exec approval of financial benefit,2026-05-26 08:00:00,2026-06-01 16:00:00,6.333333333401242,Orange
+Product Quality IBA Review,2026-06-19 08:00:00,2026-06-19 16:00:00,0.33333333340124227,Grey
+Quality - Exec approval of financial benefit,2026-06-19 08:00:00,2026-06-19 16:00:00,0.33333333340124227,Orange
+Product Transition IBA Review,2026-06-19 08:00:00,2026-06-19 16:00:00,0.33333333340124227,Grey
+Product Transition - Exec approval of financial benefit,2026-06-19 08:00:00,2026-06-19 16:00:00,0.33333333340124227,Orange
+Develop IBA Deck,2026-06-02 08:00:00,2026-06-24 16:00:00,22.333333333401242,Black
+Feedstock Utilization IBA Deck,2026-06-02 08:00:00,2026-06-04 16:00:00,2.3333333334012423,Grey
+Feedstock - Develop design framework,2026-06-02 08:00:00,2026-06-04 16:00:00,2.3333333334012423,Orange
+Feedstock - Develop storyboard,2026-06-02 08:00:00,2026-06-04 16:00:00,2.3333333334012423,Orange
+Product Quality IBA Deck,2026-06-22 08:00:00,2026-06-22 16:00:00,0.33333333340124227,Grey
+Quality - Develop design framework,2026-06-22 08:00:00,2026-06-22 16:00:00,0.33333333340124227,Orange
+Quality - Develop storyboard,2026-06-22 08:00:00,2026-06-22 16:00:00,0.33333333340124227,Orange
+Product Transition IBA Deck,2026-06-22 08:00:00,2026-06-22 16:00:00,0.33333333340124227,Grey
+Product Transition Deck - Develop design framework,2026-06-22 08:00:00,2026-06-22 16:00:00,0.33333333340124227,Orange
+Product Transition Deck - Develop storyboard,2026-06-22 08:00:00,2026-06-22 16:00:00,0.33333333340124227,Orange
+Series 2 - Complete IBA Deck,2026-06-23 08:00:00,2026-06-23 16:00:00,0.33333333340124227,Orange
+Series 2 - IBA Deck - Executive Review,2026-06-24 08:00:00,2026-06-24 16:00:00,0.33333333340124227,Orange
+Series 2 - POV Portal - Executive Review,2026-06-22 08:00:00,2026-06-22 16:00:00,0.33333333340124227,Orange
+Series 3 IBA Development,2026-06-25 08:00:00,2026-09-24 16:00:00,91.33333333340124,Black Outline
+Data Qualification,2026-06-25 08:00:00,2026-08-31 16:00:00,67.33333333340124,Black
+Planning & Scheduling Data Qualification,2026-06-25 08:00:00,2026-07-06 16:00:00,11.333333333401242,Grey
+P&S - Establish Data Connection,2026-06-25 08:00:00,2026-06-25 16:00:00,0.33333333340124227,Orange
+P&S - Validate Data,2026-06-26 08:00:00,2026-06-30 16:00:00,4.333333333401242,Orange
+P&S - Check Data Availability,2026-07-01 08:00:00,2026-07-03 16:00:00,2.3333333334012423,Orange
+P&S - Mark Receipt of Each Data Source,2026-07-06 08:00:00,2026-07-06 16:00:00,0.33333333340124227,Orange
+Asset Health & Maintenance Data Qualification,2026-08-26 08:00:00,2026-08-31 16:00:00,5.333333333401242,Grey
+Maintenance - Establish Data Connection,2026-08-26 08:00:00,2026-08-26 16:00:00,0.33333333340124227,Orange
+Maintenance - Validate Data,2026-08-27 08:00:00,2026-08-27 16:00:00,0.33333333340124227,Orange
+Maintenance - Check Data Availability,2026-08-28 08:00:00,2026-08-28 16:00:00,0.33333333340124227,Orange
+Maintenance - Mark Receipt of Each Data Source,2026-08-31 08:00:00,2026-08-31 16:00:00,0.33333333340124227,Orange
+Plant Resource Efficiency Data Qualification,2026-08-26 08:00:00,2026-08-31 16:00:00,5.333333333401242,Grey
+RE - Establish Data Connection,2026-08-26 08:00:00,2026-08-26 16:00:00,0.33333333340124227,Orange
+RE - Validate Data,2026-08-27 08:00:00,2026-08-27 16:00:00,0.33333333340124227,Orange
+RE - Check Data Availability,2026-08-28 08:00:00,2026-08-28 16:00:00,0.33333333340124227,Orange
+RE - Mark Receipt of Each Data Source,2026-08-31 08:00:00,2026-08-31 16:00:00,0.33333333340124227,Orange
+"Digital Twin, Mapping and Prediction",2026-07-07 08:00:00,2026-09-16 16:00:00,71.33333333340124,Black
+Planning & Scheduling Digital Twin,2026-07-07 08:00:00,2026-07-21 16:00:00,14.333333333401242,Grey
+P&S - Determine relevant tags & target,2026-07-07 08:00:00,2026-07-09 16:00:00,2.3333333334012423,Orange
+P&S - DS KT session,2026-07-10 08:00:00,2026-07-10 16:00:00,0.33333333340124227,Orange
+P&S - Label tags for the models,2026-07-10 08:00:00,2026-07-14 16:00:00,4.333333333401242,Orange
+P&S - Create Bounds & Changing Rates,2026-07-15 08:00:00,2026-07-15 16:00:00,0.33333333340124227,Orange
+P&S - Generate model,2026-07-16 08:00:00,2026-07-16 16:00:00,0.33333333340124227,Orange
+P&S - Ensure correct formatting and that data is uploaded to Maestro,2026-07-17 08:00:00,2026-07-21 16:00:00,4.333333333401242,Orange
+Asset Health & Maintenance Digital Twin,2026-09-01 08:00:00,2026-09-15 16:00:00,14.333333333401242,Grey
+Maintenance - Determine relevant tags & target,2026-09-01 08:00:00,2026-09-03 16:00:00,2.3333333334012423,Orange
+Maintenance - DS KT session,2026-09-04 08:00:00,2026-09-04 16:00:00,0.33333333340124227,Orange
+Maintenance - Label tags for the models,2026-09-04 08:00:00,2026-09-08 16:00:00,4.333333333401242,Orange
+Maintenance - Create Bounds & Changing Rates,2026-09-09 08:00:00,2026-09-09 16:00:00,0.33333333340124227,Orange
+Maintenance - Generate model,2026-09-10 08:00:00,2026-09-10 16:00:00,0.33333333340124227,Orange
+Maintenance - Ensure correct formatting and that data is uploaded to Maestro,2026-09-11 08:00:00,2026-09-15 16:00:00,4.333333333401242,Orange
+Plant Resource Efficiency Digital Twin,2026-09-01 08:00:00,2026-09-15 16:00:00,14.333333333401242,Grey
+RE - Determine relevant tags & target,2026-09-01 08:00:00,2026-09-03 16:00:00,2.3333333334012423,Orange
+RE - DS KT session,2026-09-04 08:00:00,2026-09-04 16:00:00,0.33333333340124227,Orange
+RE - Label tags for the models,2026-09-04 08:00:00,2026-09-08 16:00:00,4.333333333401242,Orange
+RE - Create Bounds & Changing Rates,2026-09-09 08:00:00,2026-09-09 16:00:00,0.33333333340124227,Orange
+RE - Generate model,2026-09-10 08:00:00,2026-09-10 16:00:00,0.33333333340124227,Orange
+RE - Ensure correct formatting and that data is uploaded to Maestro,2026-09-11 08:00:00,2026-09-15 16:00:00,4.333333333401242,Orange
+Stack Series LSTM Models,2026-09-16 08:00:00,2026-09-16 16:00:00,0.33333333340124227,Orange
+Benefit Quantification,2026-07-17 08:00:00,2026-09-15 16:00:00,60.33333333340124,Black
+Planning & Scheduling Benefit Quantification,2026-07-17 08:00:00,2026-07-29 16:00:00,12.333333333401242,Grey
+P&S - Establish benefit measurement methodology,2026-07-17 08:00:00,2026-07-21 16:00:00,4.333333333401242,Orange
+P&S - Consult with EPA to learn implementation,2026-07-22 08:00:00,2026-07-22 16:00:00,0.33333333340124227,Orange
+P&S - Create implementation framework,2026-07-23 08:00:00,2026-07-29 16:00:00,6.333333333401242,Orange
+Asset Health & Maintenance Benefit Quantification,2026-09-11 08:00:00,2026-09-15 16:00:00,4.333333333401242,Grey
+Maintenance - Establish benefit measurement methodology,2026-09-11 08:00:00,2026-09-11 16:00:00,0.33333333340124227,Orange
+Maintenance - Consult with EPA to learn implementation,2026-09-14 08:00:00,2026-09-14 16:00:00,0.33333333340124227,Orange
+Maintenance - Create implementation framework,2026-09-15 08:00:00,2026-09-15 16:00:00,0.33333333340124227,Orange
+Plant Resource Efficiency Benefit Quantification,2026-09-11 08:00:00,2026-09-15 16:00:00,4.333333333401242,Grey
+RE - Establish benefit measurement methodology,2026-09-11 08:00:00,2026-09-11 16:00:00,0.33333333340124227,Orange
+RE - Consult with EPA to learn implementation,2026-09-14 08:00:00,2026-09-14 16:00:00,0.33333333340124227,Orange
+RE - Create implementation framework,2026-09-15 08:00:00,2026-09-15 16:00:00,0.33333333340124227,Orange
+Develop Case Study & Review,2026-07-30 08:00:00,2026-09-18 16:00:00,50.33333333340124,Black
+Planning & Scheduling Case Study,2026-07-30 08:00:00,2026-08-25 16:00:00,26.333333333401242,Grey
+P&S Case Study - Share with CS,2026-07-30 08:00:00,2026-08-18 16:00:00,19.333333333401242,Orange
+P&S Case Study - Import,2026-08-19 08:00:00,2026-08-20 16:00:00,1.3333333334012423,Orange
+P&S Case Study - Check & Proofread,2026-08-21 08:00:00,2026-08-25 16:00:00,4.333333333401242,Orange
+Asset Health & Maintenance Case Study,2026-09-16 08:00:00,2026-09-18 16:00:00,2.3333333334012423,Grey
+Maintenance Case Study - Share content with CS,2026-09-16 08:00:00,2026-09-16 16:00:00,0.33333333340124227,Orange
+Maintenance Case Study - Import,2026-09-17 08:00:00,2026-09-17 16:00:00,0.33333333340124227,Orange
+Maintenance Case Study - Check & Proofread,2026-09-18 08:00:00,2026-09-18 16:00:00,0.33333333340124227,Orange
+Plant Resource Efficiency Case Study,2026-09-16 08:00:00,2026-09-18 16:00:00,2.3333333334012423,Grey
+RE Case Study - Share content with CS,2026-09-16 08:00:00,2026-09-16 16:00:00,0.33333333340124227,Orange
+RE Case Study - Import,2026-09-17 08:00:00,2026-09-17 16:00:00,0.33333333340124227,Orange
+RE Case Study - Check & Proofread,2026-09-18 08:00:00,2026-09-18 16:00:00,0.33333333340124227,Orange
+Executive Review of IBA Results,2026-08-26 08:00:00,2026-09-21 16:00:00,26.333333333401242,Black
+Planning & Scheduling IBA Review,2026-08-26 08:00:00,2026-09-01 16:00:00,6.333333333401242,Grey
+P&S - Exec approval of financial benefit,2026-08-26 08:00:00,2026-09-01 16:00:00,6.333333333401242,Orange
+Asset Health & Maintenance IBA Review,2026-09-21 08:00:00,2026-09-21 16:00:00,0.33333333340124227,Grey
+Maintenance - Exec approval of financial benefit,2026-09-21 08:00:00,2026-09-21 16:00:00,0.33333333340124227,Orange
+Plant Resource Efficiency IBA Review,2026-09-21 08:00:00,2026-09-21 16:00:00,0.33333333340124227,Grey
+RE - Exec approval of financial benefit,2026-09-21 08:00:00,2026-09-21 16:00:00,0.33333333340124227,Orange
+Develop IBA Deck,2026-09-02 08:00:00,2026-09-24 16:00:00,22.333333333401242,Black
+Planning & Scheduling IBA Deck,2026-09-02 08:00:00,2026-09-04 16:00:00,2.3333333334012423,Grey
+P&S - Develop design framework,2026-09-02 08:00:00,2026-09-04 16:00:00,2.3333333334012423,Orange
+P&S - Develop storyboard,2026-09-02 08:00:00,2026-09-04 16:00:00,2.3333333334012423,Orange
+Asset Health & Maintenance IBA Deck,2026-09-22 08:00:00,2026-09-22 16:00:00,0.33333333340124227,Grey
+Maintenance - Develop design framework,2026-09-22 08:00:00,2026-09-22 16:00:00,0.33333333340124227,Orange
+Maintenance - Develop storyboard,2026-09-22 08:00:00,2026-09-22 16:00:00,0.33333333340124227,Orange
+Plant Resource Efficiency IBA Deck,2026-09-22 08:00:00,2026-09-22 16:00:00,0.33333333340124227,Grey
+RE Deck - Develop design framework,2026-09-22 08:00:00,2026-09-22 16:00:00,0.33333333340124227,Orange
+RE Deck - Develop storyboard,2026-09-22 08:00:00,2026-09-22 16:00:00,0.33333333340124227,Orange
+Series 3 - Complete IBA Deck,2026-09-23 08:00:00,2026-09-23 16:00:00,0.33333333340124227,Orange
+Series 3 - IBA Deck - Executive Review,2026-09-24 08:00:00,2026-09-24 16:00:00,0.33333333340124227,Orange
+Series 3 - POV Portal - Executive Review,2026-09-22 08:00:00,2026-09-22 16:00:00,0.33333333340124227,Orange
+Go Live Deployment,2026-09-25 08:00:00,2026-12-31 17:00:00,97.375,Black Outline
+Live Data Integration,2026-09-25 08:00:00,2026-10-09 16:00:00,14.333333333401242,Black
+Finalize list of data sources,2026-09-25 08:00:00,2026-09-28 16:00:00,3.3333333334012423,Orange
+Find integration solution,2026-09-29 08:00:00,2026-09-29 16:00:00,0.33333333340124227,Orange
+Confirm IT architecture,2026-09-25 08:00:00,2026-09-25 16:00:00,0.33333333340124227,Orange
+Finalize IT Architecture,2026-09-28 08:00:00,2026-10-09 16:00:00,11.333333333401242,Orange
+Deploy Gateway Server,2026-09-25 08:00:00,2026-09-25 16:00:00,0.33333333340124227,Orange
+Outbound Connection to Maestro,2026-09-28 08:00:00,2026-09-28 16:00:00,0.33333333340124227,Orange
+Client prepare environment,,,,Orange
+Make Live Connection,2026-09-28 08:00:00,2026-09-28 16:00:00,0.33333333340124227,Orange
+Validate Live Data Connection,2026-09-25 08:00:00,2026-09-25 16:00:00,0.33333333340124227,Orange
+Test VPN Connection,,,,Orange
+CM to M or Push Data to Maestro,2026-09-25 08:00:00,2026-10-08 16:00:00,13.333333333401242,Orange
+Configure Maestro Performance Center,2026-09-25 08:00:00,2026-11-11 17:00:00,47.375,Black
+Generate KPI list,2026-09-25 08:00:00,2026-10-05 16:00:00,10.333333333401242,Orange
+Build KPI formulas,2026-10-06 08:00:00,2026-10-14 16:00:00,8.333333333401242,Orange
+KT w/DS for KPIs to be produced,2026-10-15 08:00:00,2026-10-15 16:00:00,0.33333333340124227,Orange
+Create initial KPI output values,2026-10-16 08:00:00,2026-10-20 16:00:00,4.333333333401242,Orange
+Validate KPI output values,2026-10-21 08:00:00,2026-10-23 16:00:00,2.3333333334012423,Orange
+Provide 'when not to display' rule,2026-10-26 08:00:00,2026-10-26 16:00:00,0.33333333340124227,Orange
+Modify KPI formulas where possible,2026-10-26 08:00:00,2026-10-30 16:00:00,4.333333333401242,Orange
+Build out KPI list in maestro,2026-11-02 09:00:00,2026-11-10 17:00:00,8.333333333299379,Orange
+Executive review of Performance Center,2026-11-11 09:00:00,2026-11-11 17:00:00,0.33333333329937886,Orange
+Live Test Model Transition,2026-09-29 08:00:00,2026-12-25 17:00:00,87.375,Black
+Create fault tolerance mechanisms,2026-11-12 09:00:00,2026-11-16 17:00:00,4.333333333299379,Orange
+Test fault tolerance mechanism,2026-11-17 09:00:00,2026-11-30 17:00:00,13.333333333299379,Orange
+Update bound & changing rates,2026-11-11 09:00:00,2026-11-12 17:00:00,1.3333333332993789,Orange
+Confirm manual data sharing methods and locations,2026-09-29 08:00:00,2026-10-01 16:00:00,2.3333333334012423,Orange
+Confirm receipt of data,2026-09-29 08:00:00,2026-10-02 16:00:00,3.3333333334012423,Orange
+Publish Model,2026-11-13 09:00:00,2026-12-02 17:00:00,19.33333333329938,Orange
+Create test period for directive issuance,2026-12-03 09:00:00,2026-12-03 17:00:00,0.33333333329937886,Orange
+Update directive issuance,2026-12-04 09:00:00,2026-12-10 17:00:00,6.333333333299379,Orange
+Update Models,2026-12-11 09:00:00,2026-12-24 17:00:00,13.333333333299379,Orange
+Finalize and Deploy Live Test Models,2026-12-25 09:00:00,2026-12-25 17:00:00,0.33333333329937886,Orange
+Go Live Governance,2026-12-28 09:00:00,2026-12-31 17:00:00,3.333333333299379,Black
+Set client weekly meeting time,2026-12-28 09:00:00,2026-12-28 17:00:00,0.33333333329937886,Orange
+Hold first weekly client meeting,2026-12-29 09:00:00,2026-12-29 17:00:00,0.33333333329937886,Orange
+Publish Live Test Status Update,2026-12-29 09:00:00,2026-12-29 17:00:00,0.33333333329937886,Orange
+Determine what access LYB employees will have,2026-12-28 09:00:00,2026-12-28 17:00:00,0.33333333329937886,Orange
+Grant limited access,2026-12-29 09:00:00,2026-12-29 17:00:00,0.33333333329937886,Orange
+Meet with LYB to explain functionality,2026-12-30 09:00:00,2026-12-30 17:00:00,0.33333333329937886,Orange
+Commence directive implementation,2026-12-31 09:00:00,2026-12-31 17:00:00,0.33333333329937886,Orange
+Implementation Control,2026-09-25 08:00:00,2026-11-05 17:00:00,41.375,Black
+Series 1,2026-09-25 08:00:00,2026-10-08 16:00:00,13.333333333401242,Grey
+Expedite Maestro control,2026-09-25 08:00:00,2026-09-25 16:00:00,0.33333333340124227,Orange
+Develop implementation detection,2026-09-25 08:00:00,2026-10-01 16:00:00,6.333333333401242,Orange
+Create known route to implementation,2026-09-25 08:00:00,2026-09-25 16:00:00,0.33333333340124227,Orange
+Create implementation report outline,2026-10-02 08:00:00,2026-10-08 16:00:00,6.333333333401242,Orange
+Revisit Automated Control,2026-09-25 08:00:00,2026-09-25 16:00:00,0.33333333340124227,Orange
+Series 2,2026-10-09 08:00:00,2026-10-22 16:00:00,13.333333333401242,Grey
+Expedite Maestro control,2026-10-09 08:00:00,2026-10-09 16:00:00,0.33333333340124227,Orange
+Develop implementation detection,2026-10-09 08:00:00,2026-10-15 16:00:00,6.333333333401242,Orange
+Create known route to implementation,2026-10-09 08:00:00,2026-10-09 16:00:00,0.33333333340124227,Orange
+Create implementation report outline,2026-10-16 08:00:00,2026-10-22 16:00:00,6.333333333401242,Orange
+Revisit Automated Control,2026-10-09 08:00:00,2026-10-09 16:00:00,0.33333333340124227,Orange
+Series 3,2026-10-23 08:00:00,2026-11-05 17:00:00,13.375,Grey
+Expedite Maestro control,2026-10-23 08:00:00,2026-10-23 16:00:00,0.33333333340124227,Orange
+Develop implementation detection,2026-10-23 08:00:00,2026-10-29 16:00:00,6.333333333401242,Orange
+Create known route to implementation,2026-10-23 08:00:00,2026-10-23 16:00:00,0.33333333340124227,Orange
+Create implementation report outline,2026-10-30 08:00:00,2026-11-05 17:00:00,6.375,Orange
+Revisit Automated Control,2026-10-23 08:00:00,2026-10-23 16:00:00,0.33333333340124227,Orange
+Review first implementation report,2026-10-09 08:00:00,2026-10-09 16:00:00,0.33333333340124227,Orange
+Ongoing Delivery,2027-01-01 09:00:00,2027-02-05 17:00:00,35.33333333329938,Black Outline
+Client Workstream Owner Introductions,2027-01-01 09:00:00,2027-01-20 17:00:00,19.33333333329938,Grey
+Client Services,2027-01-01 09:00:00,2027-01-20 17:00:00,19.33333333329938,Orange
+Introductions to client owners for each workstream,2027-01-01 09:00:00,2027-01-20 17:00:00,19.33333333329938,Orange
+Internal Weekly Call,2027-01-21 09:00:00,2027-01-21 17:00:00,0.33333333329937886,Grey
+Set Internal Weekly Call,2027-01-21 09:00:00,2027-01-21 17:00:00,0.33333333329937886,Orange
+Ensure correct audience Internal Weekly Call,2027-01-21 09:00:00,2027-01-21 17:00:00,0.33333333329937886,Orange
+Weekly Client Call,2027-01-22 09:00:00,2027-01-22 17:00:00,0.33333333329937886,Grey
+Set Weekly Client Call,2027-01-22 09:00:00,2027-01-22 17:00:00,0.33333333329937886,Orange
+Ensure correct audience Weekly Client Call,2027-01-22 09:00:00,2027-01-22 17:00:00,0.33333333329937886,Orange
+Reporting,2027-01-25 09:00:00,2027-02-05 17:00:00,11.333333333299379,Grey
+Publish Executive Report every month,2027-01-25 09:00:00,2027-02-05 17:00:00,11.333333333299379,Orange
+Issue Weekly Live Test Updates,2027-01-25 09:00:00,2027-01-27 17:00:00,2.333333333299379,Orange
