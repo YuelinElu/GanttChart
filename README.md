@@ -85,6 +85,20 @@ npm run dev
 
 The Vite dev server runs on `http://localhost:5173` and proxies `/api` calls to `http://localhost:8000`. Make sure the backend is running first.
 
+Using the web app
+-----------------
+
+With both servers running, open `http://localhost:5173` and use the control bar at the top:
+
+- **Dataset selector** - `Show default` loads `data/data.csv`, `Show empty` provides a blank canvas, and `Show uploaded` switches to an uploaded CSV (same columns as the default dataset).
+- **Import CSV** - upload any CSV in the documented format; it renders instantly in the browser, using the same colour mapping as the backend.
+- **Add / edit / delete tasks** - select a task (from the chart or the frozen task list) to edit its name and datetimes, choose a palette colour or pick a custom hex (with optional outline), drag bars to reschedule, or delete tasks outright. Durations and tooltips stay in sync automatically.
+- **Undo / Redo** - use the toolbar buttons or shortcuts (`Ctrl+Z`, `Ctrl+Shift+Z`, `Ctrl+Y`) to step backward or forward through your edits without refreshing.
+- **Search tasks** - type in the search box to highlight matches, then use Prev/Next (or Enter/Shift+Enter) to cycle through them -- the chart and task list scroll into view automatically.
+- **Task details panel** - collapse the detail drawer when you want maximum Gantt real estate, and expand it again to edit the selected task.
+- **Reorder tasks** - drag the task name up or down to change its row; the Gantt bars follow instantly without changing dates.
+- **Export CSV** - download the current view (including edits and new tasks) in the original schema so you can share or re-import it later.
+
 
 Production build and hosting
 ----------------------------
@@ -104,10 +118,16 @@ Features implemented
 --------------------
 
 - Dedicated CSV loader (`services/task_loader.py`) that maps colours, computes durations, and formats tooltip metadata.
-- `/api/tasks` FastAPI endpoint (`app.py`) with CORS for Vite dev tooling.
-- React component (`frontend/src/App.jsx`) that fetches tasks, switches view modes (day/week/month), injects per-task colours, and renders a legend.
-- Tailored styling (`frontend/src/styles.css`) for a professional dashboard feel with neutral backgrounds, subtle shadows, readable typography, and outline styling for “Black Outline” tasks.
-- README instructions covering setup, development, and production build workflows.
+- FastAPI endpoints (`/api/tasks`, `/healthz`) with CORS enabled for the Vite proxy.
+- React workspace (`frontend/src/App.jsx`) featuring dataset switching, CSV import/export, adding/deleting tasks, inline editing, and drag-to-reschedule support.
+- Drag-and-drop task reordering keeps the sidebar and bars aligned without touching dates.
+- Palette selector and custom colour picker (with outline toggle) in the task editor so each bar can match your preferred styling.
+- Search box with previous/next navigation that jumps the timeline and sidebar to each matching task.
+- Collapsible task detail drawer so you can keep the focus on the chart when you only need a quick glance.
+- Client-side undo/redo history with keyboard shortcuts (Ctrl+Z / Ctrl+Shift+Z / Ctrl+Y) so edits are reversible without reloading.
+- Alignment and labelling enhancements that keep the frozen task list perfectly in sync with the chart grid, with responsive legends and hover tooltips.
+- Tailored styling (`frontend/src/styles.css`) for a professional dashboard feel with neutral backgrounds, subtle shadows, readable typography, and outline styling for "Black Outline" tasks.
+- README instructions covering setup, development, production builds, and the new runtime controls.
 
 
 Customisation ideas
