@@ -36,6 +36,7 @@ export default function Toolbar({
       : totalCount > 0
       ? "Shift all tasks"
       : "No tasks available";
+  const selectionSummary = selectedCount > 0 ? `${selectedCount} selected` : "All tasks";
 
   return (
     <section className="toolbar" aria-label="Timeline controls">
@@ -108,6 +109,9 @@ export default function Toolbar({
             >
               {shiftLabel}
             </button>
+            <span className="toolbar__selection-badge" aria-live="polite">
+              {selectionSummary}
+            </span>
             <button type="button" className="toolbar__pill toolbar__pill--accent" onClick={onAddTask}>
               Add Task
             </button>

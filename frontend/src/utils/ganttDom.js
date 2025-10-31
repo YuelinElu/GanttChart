@@ -146,6 +146,21 @@ export function highlightSearchMatches(containerEl, matchIds) {
   });
 }
 
+export function highlightSelectedTasks(containerEl, selectedIds) {
+  if (!containerEl) {
+    return;
+  }
+  const ids = new Set(selectedIds ?? []);
+  containerEl.querySelectorAll(".bar-wrapper").forEach((wrapper) => {
+    const id = wrapper.getAttribute("data-id");
+    if (id && ids.has(id)) {
+      wrapper.classList.add("is-bulk-selected");
+    } else {
+      wrapper.classList.remove("is-bulk-selected");
+    }
+  });
+}
+
 export function syncTopScrollbar(mainEl, topScrollbarEl) {
   if (!mainEl || !topScrollbarEl) {
     return;

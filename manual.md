@@ -1,17 +1,25 @@
-# GanttChart User Manual
+﻿# GanttChart User Manual
 
-This guide walks through the day-to-day features available in the GanttChart project.  
-Use it alongside `README.md`, which covers installation and developer notes.
+Welcome! This guide focuses on day-to-day usage of the GanttChart application.  
+For installation and deployment steps, see `README.md`.
 
 ---
 
 ## 1. Launching the app
 
-1. Start the FastAPI backend (default `http://localhost:8000`).
-2. Start the React frontend (`npm run dev` inside `frontend/`), then open `http://localhost:5173`.
-3. Make sure the banner does **not** show “Unable to load tasks”. If it does, verify that the backend is running and reachable.
+1. **Start the API**  
+   ```powershell
+   uvicorn app:app --reload --port 8000
+   ```
+2. **Start the frontend**  
+   ```powershell
+   cd frontend
+   npm install
+   npm run dev
+   ```
+3. Open `http://localhost:5173`. If you see “Unable to load tasks”, confirm the API is reachable at `http://localhost:8000/api/tasks`.
 
-> Tip: The backend also serves the production build at `http://localhost:8000/` after `npm run build`.
+> Production build: run `npm run build` inside `frontend/`, then visit `http://localhost:8000/`.
 
 ---
 
@@ -19,81 +27,75 @@ Use it alongside `README.md`, which covers installation and developer notes.
 
 | Area | Description |
 |------|-------------|
-| **Toolbar (top)** | Dataset selector, import/export, undo/redo, bulk shift, add task, global search. |
-| **View controls** | Day / Week / Month toggle above the chart for quick zoom changes. |
-| **Task sidebar (left)** | Frozen list of task names that stays aligned with the Gantt rows. Drag to reorder. |
-| **Timeline (center)** | Interactive bars (drag to reschedule, click to focus). Scrollbars at top/bottom handle long ranges. |
-| **Task editor (right)** | Details for the currently focused task; collapse for maximum canvas space. |
+| **Toolbar** | Dataset selector, import/export, undo/redo, bulk shift, add task, global search. A badge reflects how many tasks are selected. |
+| **View controls** | Day / Week / Month toggle situated directly above the chart. |
+| **Task sidebar** | Frozen task list that stays aligned with the Gantt rows; supports drag-and-drop reordering and multi-select. |
+| **Timeline** | Interactive bars (drag to reschedule, click to focus). Sticky horizontal scrollbar sits above the chart. |
+| **Task editor** | Detailed panel on the right for editing names, dates, and colours; collapsible when you need more canvas space. |
 
 ---
 
 ## 3. Working with datasets
 
-- **Dataset selector**  
-  - *Show default*: loads `data/data.csv`.  
-  - *Show empty*: starts with an empty timeline.  
-  - *Show uploaded*: displays the last CSV you uploaded (see below).
+- **Dataset selector**
+  - *Show default*: loads `data/data.csv`.
+  - *Show empty*: starts with a blank timeline.
+  - *Show uploaded*: switches to the most recent CSV you imported.
 
-- **Import CSV**  
+- **Import CSV**
   1. Click **Import**.
-  2. Choose a UTF-8 CSV with the documented columns (see README).  
-  3. The chart refreshes instantly. The active dataset switches to “Show uploaded”.
+  2. Choose a UTF-8 CSV containing the documented columns (`Tasks`, `Start Date`, `Completion`, optional `Color`).
+  3. The chart refreshes immediately and the dataset selector jumps to “Show uploaded”.
 
-- **Export CSV**  
-  - Click **Export** to download the current timeline (including edits) in the same schema.  
-  - The filename includes a timestamp or your uploaded file name.
+- **Export CSV**
+  - Click **Export** to download the current timeline (including edits). Filenames include a timestamp or the uploaded file name.
 
 ---
 
 ## 4. Viewing and navigation
 
-- Use the **Day / Week / Month** toggle to adjust the timeline scale.
-- Scroll vertically inside the sidebar or timeline; a sticky horizontal scrollbar sits above the chart for long-range navigation.
-- The **search box** highlights matching tasks:
-  - Type to filter.
-  - Press **Enter** / **Shift + Enter** or use **Prev / Next** to move between hits. The chart and sidebar auto-scroll to the active match.
+- Toggle between **Day / Week / Month** to change the scale.
+- Scroll vertically inside the sidebar or timeline; the horizontal scrollbar fixed above the chart helps with long schedules.
+- Use the **search bar** to highlight tasks:
+  - Type to filter; results glow in both the sidebar and chart.
+  - Press **Enter** / **Shift + Enter** or click **Prev / Next** to cycle through matches (auto-scroll keeps the active bar in view).
 
 ---
 
 ## 5. Selecting tasks
 
-- **Single select**  
-  - Click a task in the sidebar or chart to focus it. The task editor updates and checkboxes remain hidden.
-
-- **Toggle selection (multi-select)**  
-  - Hold **Ctrl** (Windows/Linux) or **⌘** (macOS) and click tasks to add/remove them from the selection.
-  - Once you select multiple tasks, checkboxes appear to indicate the selection.
-
-- **Range selection**  
-  - Click the first task in the range, hold **Shift**, then click the last task. Every task in between becomes selected.
-
-- **Select all / clear all**  
-  - Use the checkbox in the sidebar header when it becomes visible (only after a multi-select begins).
-
+- **Single select** – Click any task bar or sidebar entry. The task editor updates and checkboxes stay hidden.
+- **Toggle select** – Hold **Ctrl** (Windows/Linux) or **⌘** (macOS) and click tasks to add/remove them from the selection.
+- **Range select** – Click a starting task, hold **Shift**, then click the ending task. Every task in between is selected.
+- **Select all / clear all** – Once multi-select is active, a checkbox in the sidebar header toggles the entire list.
+- Hover between rows to reveal an "Add task here" control where you can insert a task exactly where you need it.
+- A badge in the toolbar (e.g., "3 selected" or "All tasks") summarises the current selection, and selected bars receive a subtle highlight in the timeline for quick visual confirmation.
 ---
 
 ## 6. Editing tasks
 
 ### 6.1 Task editor
 
-1. Click a task to load it into the editor.  
-2. Update **Name**, **Start**, **End** (minute resolution).  
+1. Click a task to load it into the editor.
+2. Update **Name**, **Start**, **End** (minute resolution).
+   - Inline validation highlights invalid ranges and disables **Save changes** until Start and End make sense.
 3. Choose a colour:
-   - Preset palette (orange, grey, black, indigo, etc.).
-   - **Custom** colour picker with outline toggle and optional label.
-4. `Save changes` persists the edit; `Reset` restores the last saved state.
-5. Use the button in the editor header to collapse/expand the panel.
+   - Preset palette entries (Orange, Grey, Black, Indigo, Black ->utline).
+   - **Custom** mode with a hex picker, outline toggle, and optional legend label.
+4. Use **Save changes** to persist, or **Reset** to restore the last saved state.
+5. Collapse the panel with the toggle in the header when you want maximum Gantt space.
 
 ### 6.2 Drag interactions
 
-- **Reschedule** by dragging the bar; start/end labels update automatically.
-- **Reorder rows** by dragging task names up/down in the sidebar.
+- Drag bars horizontally to reschedule; duration and tooltip metadata update automatically.
+- Drag task names in the sidebar to reorder rows without touching dates.
 
 ### 6.3 Add / delete / undo / redo
 
-- **Add Task** creates a 4-hour task near the selected task’s start time (or “now” if nothing is selected).
-- **Delete Task** (button inside the editor) removes the focused task.
-- **Undo / Redo** via toolbar buttons or shortcuts:
+- **Add Task** creates a 4-hour entry near the focused task’s start time (or “now” if nothing is selected).
+- **Delete task** removes the focused task.
+- **Undo / Redo** via:
+  - Toolbar buttons
   - `Ctrl + Z`
   - `Ctrl + Shift + Z` or `Ctrl + Y`
 
@@ -101,25 +103,25 @@ Use it alongside `README.md`, which covers installation and developer notes.
 
 ## 7. Bulk shifting the timeline
 
-1. Select one or more tasks (see Section 5).  
-   - If nothing is selected, the shift applies to **all** tasks.
+1. Select one or more tasks (see Section 5). If nothing is selected, the shift will apply to **every** task.
 2. Click **Shift timeline** in the Planning block.
 3. In the modal:
-   - Set the amount (`1` by default).
-   - Choose **hours / days / weeks**.
-   - Pick **Forward** or **Backward**.
-4. Press **Apply shift**. Start/end times for the targeted tasks move by the chosen offset.
-5. Use **Undo** if needed.
+   - Enter the amount (hours/days/weeks).
+   - Choose Forward or Backward.
+4. Press **Apply shift**. Start and end dates move by the specified offset.  
+   Use **Undo** if you need to revert.
 
 ---
 
 ## 8. Colour coding
 
-- CSV colour names map to the following palette:
-  - Orange, Grey, Black (filled)
-  - Black Outline (stroke only)
-- Custom colours allow any valid hex; outline-only mode is supported for contrast.
-- The legend has been removed to reduce clutter; use custom labels to document meanings when necessary.
+- Named colours in the CSV map to:
+  - Orange -> `#f5642d`
+  - Grey -> `#a9a9a9`
+  - Black -> `#000000`
+  - Black ->utline → `#000000` (drawn as an outline-only bar)
+- Custom hex values are supported; outline-only mode helps when using darker tones.
+- The legend was removed to reduce clutter. Use custom labels or documentation if you need to describe colour meanings.
 
 ---
 
@@ -128,30 +130,24 @@ Use it alongside `README.md`, which covers installation and developer notes.
 | Shortcut | Action |
 |----------|--------|
 | `Ctrl + Z` | Undo |
-| `Ctrl + Shift + Z` or `Ctrl + Y` | Redo |
-| `Enter` / `Shift + Enter` while searching | Next / Previous match |
-| `Esc` | Close the shift modal (when open) |
+| `Ctrl + Shift + Z` / `Ctrl + Y` | Redo |
+| `Enter` / `Shift + Enter` in search | Next / Previous match |
+| `Esc` | Close the shift modal |
 
 ---
 
 ## 10. Troubleshooting
 
-- **Tasks fail to load**  
-  - Confirm the backend is running on `http://localhost:8000`.  
-  - Check the console/logs for parsing errors (invalid dates are skipped automatically).
-
-- **Shift modal always moves every task**  
-  - Ensure you have an active multi-selection (checkboxes visible). Otherwise, the modal intentionally targets the full timeline.
-
-- **Editor not updating**  
-  - Verify you single-clicked a task (without Ctrl/⌘ modifiers). Multi-select mode keeps the editor showing the last focused task until you pick a specific one.
+- **Tasks fail to load** – Ensure the backend is running and the CSV has valid date values. Invalid rows are skipped with a console warning.
+- **Shift modal moves everything** – Select specific tasks first (toolbar badge will show “All tasks” if nothing is selected).
+- **Editor won’t update** – Make sure you clicked a task without modifier keys; shift/cmd clicks add to the selection without changing focus.
 
 ---
 
 ## 11. Next steps
 
-- Extend the CSV with additional metadata (owners, status) and surface it in the tooltip or editor.
-- Introduce filters (e.g., by colour, status, ownership) to focus on specific subsets.
-- Persist changes to disk or a database via additional FastAPI endpoints if you need multi-user collaboration.
+- Extend the CSV with extra metadata (owners, status) and surface it in the tooltip or editor.
+- Add filters (by colour, owner, status) for large portfolios.
+- Connect the API to persistent storage for multi-user environments.
 
 Happy scheduling!

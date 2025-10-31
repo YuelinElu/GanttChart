@@ -5,6 +5,7 @@ import useTaskManager from "./hooks/useTaskManager";
 import Toolbar from "./components/Toolbar";
 import TaskEditor from "./components/TaskEditor";
 import TaskSidebar from "./components/TaskSidebar";
+import SummaryBar from "./components/SummaryBar";
 import ShiftModal from "./components/ShiftModal";
 import { DATASET_OPTIONS, VIEW_MODES } from "./constants/appConstants";
 import {
@@ -14,9 +15,11 @@ import {
   buildColorSpecFromDraft,
   buildNewTaskName,
   coerceToDate,
+  computeDurationMetrics,
   convertTasks,
   createEditorDraftFromTask,
   formatIsoLocal,
+  formatHumanDate,
   generateTaskId,
   getDraftColorPreview,
   parseDateTimeLocal,
@@ -28,6 +31,7 @@ import {
   adjustSidebarWidth,
   applyTaskStyles,
   highlightSearchMatches,
+  highlightSelectedTasks,
   syncSidebarMetrics,
   syncTopScrollbar,
 } from "./utils/ganttDom";
@@ -63,6 +67,9 @@ const tooltipTemplate = (task) => {
     </div>
   `;
 };
+
+const DATE_ERROR_MESSAGE = "End time must be after the start time.";
+const DEFAULT_TASK_DURATION_MS = 4 * 60 * 60 * 1000;
 
 export default function App() {
   const {
@@ -129,9 +136,138 @@ export default function App() {
   const totalTaskCount = tasks.length;
   const selectedCount = selectedTaskIds.length;
   const hasTasks = tasks.length > 0;
+  const editorDatesInvalid = useMemo(() => {
+    if (!editorDraft) {
+      return false;
+    }
+    const start = parseDateTimeLocal(editorDraft.start);
+    const end = parseDateTimeLocal(editorDraft.end);
+    if (!start || !end) {
+      return false;
+    }
+    return end.getTime() < start.getTime();
+  }, [editorDraft]);
   const searchStatus = searchMatches.length
     ? `${searchIndex >= 0 ? searchIndex + 1 : 0} / ${searchMatches.length}`
     : "0 / 0";
+  const datasetLabel = useMemo(() => {
+    switch (datasetMode) {
+      case DATASET_OPTIONS.DEFAULT:
+        return "Default dataset";
+      case DATASET_OPTIONS.EMPTY:
+        return "Empty workspace";
+      case DATASET_OPTIONS.UPLOADED:
+        return uploadedName ? `Uploaded (${uploadedName})` : "Uploaded dataset";
+      default:
+        return "";
+    }
+  }, [datasetMode, uploadedName]);
+  const scheduleSummary = useMemo(() => {
+    if (!tasks.length) {
+      return {
+        count: 0,
+        earliestLabel: "—",
+        latestLabel: "—",
+        spanLabel: "—",
+      };
+    }
+
+    let earliest = null;
+    let latest = null;
+
+    tasks.forEach((task) => {
+      const start = coerceToDate(task.start) ?? coerceToDate(task.end);
+      const end = coerceToDate(task.end) ?? coerceToDate(task.start);
+      if (start && (!earliest || start.getTime() < earliest.getTime())) {
+        earliest = start;
+      }
+      if (end && (!latest || end.getTime() > latest.getTime())) {
+        latest = end;
+      }
+    });
+
+    if (!earliest || !latest) {
+      return {
+        count: tasks.length,
+        earliestLabel: "—",
+        latestLabel: "—",
+        spanLabel: "—",
+      };
+    }
+
+    const metrics = computeDurationMetrics(earliest, latest);
+    return {
+      count: tasks.length,
+      earliestLabel: metrics?.startLabel ?? formatHumanDate(earliest),
+      latestLabel: metrics?.endLabel ?? formatHumanDate(latest),
+      spanLabel: metrics?.durationLabel ?? "—",
+    };
+  }, [tasks]);
+
+  const computeBaselineForIndex = useCallback(
+    (index) => {
+      const now = new Date();
+      const before = index > 0 ? tasks[index - 1] : null;
+      const after = index < tasks.length ? tasks[index] : null;
+      if (before) {
+        const candidate =
+          coerceToDate(before.end) ?? coerceToDate(before.start);
+        if (candidate) {
+          return new Date(candidate.getTime());
+        }
+      }
+      if (after) {
+        const candidate = coerceToDate(after.start);
+        if (candidate) {
+          return new Date(candidate.getTime());
+        }
+      }
+      return now;
+    },
+    [tasks],
+  );
+
+  const insertTaskAtPosition = useCallback(
+    (insertIndex, baselineDate) => {
+      const safeBaseline =
+        baselineDate instanceof Date
+          ? new Date(baselineDate.getTime())
+          : new Date();
+      let createdTask = null;
+
+      mutateTasks(
+        (previous) => {
+          const startDate = new Date(safeBaseline.getTime());
+          const endDate = new Date(startDate.getTime() + DEFAULT_TASK_DURATION_MS);
+          createdTask = {
+            id: generateTaskId(),
+            name: buildNewTaskName(previous.length + 1),
+            start: formatIsoLocal(startDate),
+            end: formatIsoLocal(endDate),
+            color: DEFAULT_COLOR.color,
+            colorLabel: DEFAULT_COLOR.label,
+            outline: DEFAULT_COLOR.outline,
+            presetKey: DEFAULT_COLOR.key,
+          };
+          const next = [...previous];
+          const boundedIndex = Math.max(0, Math.min(insertIndex, next.length));
+          next.splice(boundedIndex, 0, createdTask);
+          return next;
+        },
+        { normalize: true, sortMode: "preserve" },
+      );
+
+      if (createdTask) {
+        selectionAnchorRef.current = createdTask.id;
+        setSelectedTaskId(createdTask.id);
+        setSelectedTaskIds([]);
+        setIsEditorCollapsed(false);
+        setEditorError("");
+        pendingScrollRef.current = createdTask.id;
+      }
+    },
+    [mutateTasks],
+  );
 
   const focusTask = useCallback(
     (taskId, { scroll = true, ensureEditorOpen = false } = {}) => {
@@ -198,16 +334,17 @@ export default function App() {
       }
       return tasks.some((task) => task.id === current) ? current : null;
     });
+  }, [tasks]);
+
+  useEffect(() => {
     setSelectedTaskIds((prev) => {
-      const next = prev.filter((id) => tasks.some((task) => task.id === id));
-      if (next.length === 0) {
-        if (!selectedTaskId) {
-          selectionAnchorRef.current = null;
-        }
-      } else if (!next.includes(selectionAnchorRef.current)) {
-        selectionAnchorRef.current = next[next.length - 1];
+      const filtered = prev.filter((id) => tasks.some((task) => task.id === id));
+      if (filtered.length !== prev.length) {
+        selectionAnchorRef.current =
+          filtered.length > 0 ? filtered[filtered.length - 1] : selectedTaskId ?? null;
+        return filtered;
       }
-      return next;
+      return prev;
     });
   }, [selectedTaskId, tasks]);
 
@@ -425,6 +562,25 @@ export default function App() {
   }, [datasetMode]);
 
   useEffect(() => {
+    const container = ganttContainerRef.current;
+    const ids =
+      selectedTaskIds.length > 0
+        ? selectedTaskIds
+        : selectedTaskId
+        ? [selectedTaskId]
+        : [];
+    highlightSelectedTasks(container, ids);
+  }, [selectedTaskId, selectedTaskIds]);
+
+  useEffect(() => {
+    if (editorDatesInvalid) {
+      setEditorError((prev) => (prev === DATE_ERROR_MESSAGE ? prev : DATE_ERROR_MESSAGE));
+    } else if (editorError === DATE_ERROR_MESSAGE) {
+      setEditorError("");
+    }
+  }, [editorDatesInvalid, editorError]);
+
+  useEffect(() => {
     if (!selectedTask) {
       setEditorDraft(null);
       setEditorError("");
@@ -444,19 +600,15 @@ export default function App() {
   const handleSidebarTaskClick = useCallback(
     (
       taskId,
-      { shiftKey = false, metaKey = false, ctrlKey = false, scroll = true } = {},
+      { shiftKey = false, metaKey = false, ctrlKey = false } = {},
     ) => {
       const multiKey = metaKey || ctrlKey;
-      let anchor = selectionAnchorRef.current;
-      if (!anchor) {
-        if (selectedTaskIds.length > 0) {
-          anchor = selectedTaskIds[selectedTaskIds.length - 1];
-        } else if (selectedTaskId) {
-          anchor = selectedTaskId;
-        } else {
-          anchor = taskId;
-        }
-      }
+      const hasSelection = selectedTaskIds.length > 0;
+      const anchor =
+        selectionAnchorRef.current ??
+        (selectedTaskIds.length > 0
+          ? selectedTaskIds[selectedTaskIds.length - 1]
+          : selectedTaskId ?? taskId);
 
       if (shiftKey && tasks.length > 0) {
         const anchorIndex = tasks.findIndex((task) => task.id === anchor);
@@ -466,10 +618,15 @@ export default function App() {
           const end = Math.max(anchorIndex, targetIndex);
           const rangeIds = tasks.slice(start, end + 1).map((task) => task.id);
           setSelectedTaskIds(rangeIds);
+          selectionAnchorRef.current = taskId;
         } else {
           setSelectedTaskIds([taskId]);
+          selectionAnchorRef.current = taskId;
         }
-      } else if (multiKey) {
+        return;
+      }
+
+      if (multiKey) {
         setSelectedTaskIds((prev) => {
           const set = new Set(prev);
           if (set.has(taskId)) {
@@ -477,19 +634,23 @@ export default function App() {
           } else {
             set.add(taskId);
           }
-          return Array.from(set);
+          const ordered = tasks
+            .map((task) => task.id)
+            .filter((id) => set.has(id));
+          return ordered;
         });
         selectionAnchorRef.current = taskId;
-      } else {
-        setSelectedTaskIds([]);
-        selectionAnchorRef.current = taskId;
+        return;
       }
 
-      if (!shiftKey) {
+      if (hasSelection) {
         selectionAnchorRef.current = taskId;
+        return;
       }
 
-      focusTask(taskId, { scroll, ensureEditorOpen: false });
+      setSelectedTaskIds([]);
+      selectionAnchorRef.current = taskId;
+      focusTask(taskId, { scroll: true, ensureEditorOpen: true });
     },
     [focusTask, selectedTaskId, selectedTaskIds, tasks],
   );
@@ -500,20 +661,26 @@ export default function App() {
         const next = new Set(prev);
         if (isSelected) {
           next.add(taskId);
-          if (!selectionAnchorRef.current) {
-            selectionAnchorRef.current = taskId;
-          }
+          selectionAnchorRef.current = taskId;
         } else {
           next.delete(taskId);
           if (selectionAnchorRef.current === taskId) {
+            const orderedRemaining = tasks
+              .map((task) => task.id)
+              .filter((id) => next.has(id));
             selectionAnchorRef.current =
-              next.size > 0 ? Array.from(next)[next.size - 1] : selectedTaskId ?? null;
+              orderedRemaining.length > 0
+                ? orderedRemaining[orderedRemaining.length - 1]
+                : selectedTaskId ?? null;
           }
         }
-        return Array.from(next);
+        const ordered = tasks
+          .map((task) => task.id)
+          .filter((id) => next.has(id));
+        return ordered;
       });
     },
-    [selectedTaskId],
+    [selectedTaskId, tasks],
   );
 
   const handleToggleSelectAll = useCallback(
@@ -521,7 +688,7 @@ export default function App() {
       if (checked) {
         const ids = tasks.map((task) => task.id);
         setSelectedTaskIds(ids);
-        selectionAnchorRef.current = ids.length ? ids[0] : null;
+        selectionAnchorRef.current = ids.length ? ids[ids.length - 1] : null;
       } else {
         setSelectedTaskIds([]);
         selectionAnchorRef.current = selectedTaskId ?? null;
@@ -556,25 +723,35 @@ export default function App() {
   );
 
   const handleAddTask = useCallback(() => {
-    const now = new Date();
-    const baseline = selectedTask ? coerceToDate(selectedTask.start) ?? now : now;
-    const startDate = new Date(baseline.getTime());
-    const endDate = new Date(startDate.getTime() + 4 * 60 * 60 * 1000);
+    const anchorId =
+      selectionAnchorRef.current ??
+      (selectedTaskIds.length > 0
+        ? selectedTaskIds[selectedTaskIds.length - 1]
+        : selectedTaskId);
+    let insertIndex = tasks.length;
+    if (anchorId) {
+      const anchorIndex = tasks.findIndex((task) => task.id === anchorId);
+      if (anchorIndex !== -1) {
+        insertIndex = anchorIndex + 1;
+      }
+    }
+    const baseline = computeBaselineForIndex(insertIndex);
+    insertTaskAtPosition(insertIndex, baseline);
+  }, [
+    computeBaselineForIndex,
+    insertTaskAtPosition,
+    selectedTaskId,
+    selectedTaskIds,
+    tasks,
+  ]);
 
-    const newTask = {
-      id: generateTaskId(),
-      name: buildNewTaskName(tasks.length + 1),
-      start: formatIsoLocal(startDate),
-      end: formatIsoLocal(endDate),
-      color: DEFAULT_COLOR.color,
-      colorLabel: DEFAULT_COLOR.label,
-      outline: DEFAULT_COLOR.outline,
-      presetKey: DEFAULT_COLOR.key,
-    };
-
-    mutateTasks((previous) => [...previous, newTask], { normalize: true });
-    focusTask(newTask.id, { ensureEditorOpen: true });
-  }, [focusTask, mutateTasks, selectedTask, tasks.length]);
+  const handleInsertTaskAtIndex = useCallback(
+    (index) => {
+      const baseline = computeBaselineForIndex(index);
+      insertTaskAtPosition(index, baseline);
+    },
+    [computeBaselineForIndex, insertTaskAtPosition],
+  );
 
   const handleDeleteTask = useCallback(() => {
     if (!selectedTask) {
@@ -598,7 +775,9 @@ export default function App() {
         [name]: nextValue,
       };
     });
-    setEditorError("");
+    if (name !== "start" && name !== "end") {
+      setEditorError("");
+    }
   }, []);
 
   const handleColorModeChange = useCallback((event) => {
@@ -685,8 +864,8 @@ export default function App() {
         setEditorError("Please provide valid start and end values.");
         return;
       }
-      if (endDate.getTime() < startDate.getTime()) {
-        setEditorError("End time must be after the start time.");
+      if (editorDatesInvalid || endDate.getTime() < startDate.getTime()) {
+        setEditorError(DATE_ERROR_MESSAGE);
         return;
       }
 
@@ -721,7 +900,7 @@ export default function App() {
 
       setEditorError("");
     },
-    [editorDraft, mutateTasks, selectedTask],
+    [editorDatesInvalid, editorDraft, mutateTasks, selectedTask],
   );
 
   const handleExport = useCallback(() => {
@@ -1010,11 +1189,11 @@ export default function App() {
   return (
     <div className="layout">
       <header className="layout__header">
-        <div>
+        <div className="layout__headline">
           <h1>Project Timeline</h1>
           <p className="subtitle">Real-time project scheduling dashboard for teams</p>
         </div>
-
+        <SummaryBar summary={scheduleSummary} datasetLabel={datasetLabel} />
       </header>
 
       <Toolbar
@@ -1087,6 +1266,9 @@ export default function App() {
           colorPresets={COLOR_PRESETS}
           colorPreview={editorColorPreview}
           customColorValue={customColorValue}
+          isDateInvalid={editorDatesInvalid}
+          dateErrorMessage={DATE_ERROR_MESSAGE}
+          disableSubmit={editorDatesInvalid}
           editorError={editorError}
           customModeValue={CUSTOM_COLOR_KEY}
         />
@@ -1117,6 +1299,7 @@ export default function App() {
               onTaskClick={handleSidebarTaskClick}
               onToggleTaskSelection={handleToggleTaskSelection}
               onToggleSelectAll={handleToggleSelectAll}
+              onInsertAtIndex={handleInsertTaskAtIndex}
               sidebarRootRef={sidebarRootRef}
               sidebarInnerRef={sidebarInnerRef}
               dragState={dragState}
@@ -1163,3 +1346,4 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 }
+

@@ -16,9 +16,14 @@ export default function TaskEditor({
   colorPresets,
   colorPreview,
   customColorValue,
+  isDateInvalid,
+  dateErrorMessage,
+  disableSubmit,
   editorError,
   customModeValue,
 }) {
+  const showGlobalError = editorError && editorError !== dateErrorMessage;
+
   return (
     <section className="editor" aria-label="Task editor">
       <div className="editor__head">
@@ -58,6 +63,7 @@ export default function TaskEditor({
                   id="task-name"
                   name="name"
                   type="text"
+                  className="editor__input"
                   value={draft?.name ?? ""}
                   onChange={onFieldChange}
                   required
@@ -70,10 +76,12 @@ export default function TaskEditor({
                   id="task-start"
                   name="start"
                   type="datetime-local"
+                  className={`editor__input${isDateInvalid ? " editor__input--error" : ""}`}
                   value={draft?.start ?? ""}
                   onChange={onFieldChange}
                   required
                   step="60"
+                  aria-invalid={isDateInvalid}
                 />
               </label>
               <label className="editor__field" htmlFor="task-end">
@@ -82,11 +90,16 @@ export default function TaskEditor({
                   id="task-end"
                   name="end"
                   type="datetime-local"
+                  className={`editor__input${isDateInvalid ? " editor__input--error" : ""}`}
                   value={draft?.end ?? ""}
                   onChange={onFieldChange}
                   required
                   step="60"
+                  aria-invalid={isDateInvalid}
                 />
+                {isDateInvalid && (
+                  <span className="editor__hint editor__hint--error">{dateErrorMessage}</span>
+                )}
               </label>
               <label className="editor__field editor__field--full">
                 <span>Colour</span>
@@ -144,6 +157,7 @@ export default function TaskEditor({
                           id="task-color-label"
                           name="customLabel"
                           type="text"
+                          className="editor__input"
                           value={draft?.customLabel ?? ""}
                           onChange={onCustomLabelChange}
                           placeholder="Legend label (optional)"
@@ -154,14 +168,18 @@ export default function TaskEditor({
                 </div>
               </label>
             </div>
-            {editorError && <p className="editor__error">{editorError}</p>}
+            {showGlobalError && <p className="editor__error">{editorError}</p>}
             <div className="editor__meta">
               <span>Starts: {selectedTask.startLabel}</span>
               <span>Ends: {selectedTask.endLabel}</span>
               <span>Duration: {selectedTask.durationLabel}</span>
             </div>
             <div className="editor__actions">
-              <button type="submit" className="editor__button editor__button--primary">
+              <button
+                type="submit"
+                className="editor__button editor__button--primary"
+                disabled={disableSubmit}
+              >
                 Save changes
               </button>
               <button type="reset" className="editor__button">
@@ -218,6 +236,9 @@ TaskEditor.propTypes = {
     label: PropTypes.string,
   }),
   customColorValue: PropTypes.string.isRequired,
+  isDateInvalid: PropTypes.bool,
+  dateErrorMessage: PropTypes.string,
+  disableSubmit: PropTypes.bool,
   editorError: PropTypes.string,
   customModeValue: PropTypes.string.isRequired,
 };
@@ -226,5 +247,8 @@ TaskEditor.defaultProps = {
   selectedTask: null,
   draft: null,
   colorPreview: null,
+  isDateInvalid: false,
+  dateErrorMessage: "",
+  disableSubmit: false,
   editorError: "",
 };

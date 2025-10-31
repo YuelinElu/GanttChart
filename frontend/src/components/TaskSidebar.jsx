@@ -8,6 +8,7 @@ export default function TaskSidebar({
   onTaskClick,
   onToggleTaskSelection,
   onToggleSelectAll,
+  onInsertAtIndex,
   sidebarRootRef,
   sidebarInnerRef,
   dragState,
@@ -53,6 +54,14 @@ export default function TaskSidebar({
           />
           <span>Task Name</span>
         </label>
+        <button
+          type="button"
+          className="gantt-sidebar__header-add"
+          onClick={() => onInsertAtIndex(0)}
+        >
+          <span aria-hidden="true">+</span>
+          <span className="sr-only">Add task to the top of the list</span>
+        </button>
       </div>
       <div
         className="gantt-sidebar__inner"
@@ -60,7 +69,7 @@ export default function TaskSidebar({
         onDragOver={onContainerDragOver}
         onDrop={onContainerDrop}
       >
-        {tasks.map((task) => (
+        {tasks.map((task, index) => (
           <div
             key={task.id}
             className={`gantt-sidebar__item${
@@ -99,12 +108,21 @@ export default function TaskSidebar({
               className="gantt-sidebar__checkbox"
               checked={selectedSet.has(task.id)}
               onClick={(event) => event.stopPropagation()}
-              onChange={(event) =>
-                onToggleTaskSelection(task.id, event.target.checked)
-              }
+              onChange={(event) => onToggleTaskSelection(task.id, event.target.checked)}
               aria-label={selectedSet.has(task.id) ? "Deselect task" : "Select task"}
             />
             <span className="gantt-sidebar__text">{task.rawName}</span>
+            <button
+              type="button"
+              className="gantt-sidebar__item-add"
+              onClick={(event) => {
+                event.stopPropagation();
+                onInsertAtIndex(index + 1);
+              }}
+            >
+              <span aria-hidden="true">+</span>
+              <span className="sr-only">Add task below {task.rawName}</span>
+            </button>
           </div>
         ))}
       </div>
@@ -124,6 +142,7 @@ TaskSidebar.propTypes = {
   onTaskClick: PropTypes.func.isRequired,
   onToggleTaskSelection: PropTypes.func.isRequired,
   onToggleSelectAll: PropTypes.func.isRequired,
+  onInsertAtIndex: PropTypes.func.isRequired,
   sidebarRootRef: PropTypes.oneOfType([
     PropTypes.func,
     PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
