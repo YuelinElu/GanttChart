@@ -5,7 +5,6 @@ const COLOR_PRESETS = [
   { key: "grey", label: "Grey", color: "#a9a9a9", outline: false },
   { key: "black", label: "Black", color: "#000000", outline: false },
   { key: "black-outline", label: "Black Outline", color: "#000000", outline: true },
-  { key: "indigo", label: "Indigo", color: "#4f46e5", outline: false },
 ];
 
 const COLOR_LOOKUP = COLOR_PRESETS.reduce((map, preset) => {
@@ -15,8 +14,7 @@ const COLOR_LOOKUP = COLOR_PRESETS.reduce((map, preset) => {
   return map;
 }, new Map());
 
-const DEFAULT_COLOR = COLOR_PRESETS.find((preset) => preset.key === "indigo") ?? COLOR_PRESETS[0];
-const CUSTOM_COLOR_KEY = "custom";
+const DEFAULT_COLOR = COLOR_PRESETS[0];
 
 const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -82,6 +80,10 @@ export function ensureStableOrder(tasks) {
     .map(({ task }, idx) => ({
       ...task,
       position: idx,
+      originalPosition:
+        Number.isFinite(task?.originalPosition) && task.originalPosition !== null
+          ? Number(task.originalPosition)
+          : idx,
     }));
 }
 
@@ -98,6 +100,7 @@ export function convertCsvRowsToTasks(rows) {
     color: stringOrNull(row?.Color ?? row?.color ?? row?.colour),
     colorLabel: stringOrNull(row?.Color ?? row?.colorLabel ?? row?.colour),
     position: Number.isFinite(row?.position) ? Number(row.position) : index,
+    originalPosition: Number.isFinite(row?.originalPosition) ? Number(row.originalPosition) : index,
   }));
 
   return normaliseTaskCollection(prepared);
@@ -113,9 +116,13 @@ export function normaliseTaskCollection(records) {
     const item = normaliseTaskRecord(record, index);
     if (item) {
       const basePosition = Number.isFinite(item.position) ? Number(item.position) : index;
+      const baseOriginal = Number.isFinite(item.originalPosition)
+        ? Number(item.originalPosition)
+        : index;
       normalised.push({
         ...item,
         position: basePosition,
+        originalPosition: baseOriginal,
       });
     }
   });
@@ -178,6 +185,9 @@ export function normaliseTaskRecord(record, index = 0) {
     startLabel: metrics.startLabel,
     endLabel: metrics.endLabel,
     position: Number.isFinite(record.position) ? Number(record.position) : index,
+    originalPosition: Number.isFinite(record.originalPosition)
+      ? Number(record.originalPosition)
+      : index,
   };
 }
 
@@ -189,12 +199,89 @@ export function sortTasksByStart(tasks) {
     .map((task, idx) => ({
       task,
       start: coerceToDate(task?.start)?.getTime() ?? Number.MAX_SAFE_INTEGER,
+      end: coerceToDate(task?.end)?.getTime() ?? Number.MAX_SAFE_INTEGER,
+      original:
+        Number.isFinite(task?.originalPosition) && task.originalPosition !== null
+          ? Number(task.originalPosition)
+          : idx,
       position: Number.isFinite(task?.position) ? task.position : idx,
       idx,
     }))
     .sort((a, b) => {
       if (a.start !== b.start) {
         return a.start - b.start;
+      }
+      if (a.end !== b.end) {
+        return a.end - b.end;
+      }
+      if (a.original !== b.original) {
+        return a.original - b.original;
+      }
+      if (a.position !== b.position) {
+        return a.position - b.position;
+      }
+      return a.idx - b.idx;
+    })
+    .map(({ task }, idx) => ({
+      ...task,
+      position: idx,
+    }));
+}
+
+export function sortTasksByEnd(tasks) {
+  if (!Array.isArray(tasks)) {
+    return [];
+  }
+  return [...tasks]
+    .map((task, idx) => ({
+      task,
+      end: coerceToDate(task?.end)?.getTime() ?? Number.MAX_SAFE_INTEGER,
+      start: coerceToDate(task?.start)?.getTime() ?? Number.MAX_SAFE_INTEGER,
+      original:
+        Number.isFinite(task?.originalPosition) && task.originalPosition !== null
+          ? Number(task.originalPosition)
+          : idx,
+      position: Number.isFinite(task?.position) ? task.position : idx,
+      idx,
+    }))
+    .sort((a, b) => {
+      if (a.end !== b.end) {
+        return a.end - b.end;
+      }
+      if (a.start !== b.start) {
+        return a.start - b.start;
+      }
+      if (a.original !== b.original) {
+        return a.original - b.original;
+      }
+      if (a.position !== b.position) {
+        return a.position - b.position;
+      }
+      return a.idx - b.idx;
+    })
+    .map(({ task }, idx) => ({
+      ...task,
+      position: idx,
+    }));
+}
+
+export function sortTasksByOriginalPosition(tasks) {
+  if (!Array.isArray(tasks)) {
+    return [];
+  }
+  return [...tasks]
+    .map((task, idx) => ({
+      task,
+      original:
+        Number.isFinite(task?.originalPosition) && task.originalPosition !== null
+          ? Number(task.originalPosition)
+          : idx,
+      position: Number.isFinite(task?.position) ? Number(task.position) : idx,
+      idx,
+    }))
+    .sort((a, b) => {
+      if (a.original !== b.original) {
+        return a.original - b.original;
       }
       if (a.position !== b.position) {
         return a.position - b.position;
@@ -214,8 +301,23 @@ export function convertTasks(rawTasks) {
     rawName: task.name,
     name: truncateLabel(task.name),
     progress: 100,
-    custom_class: `task-color-${task.id}`,
+    custom_class: task.custom_class
+      ? task.custom_class
+      : `task-color-${escapeForClass(task.id)}-${escapeForClass(task.color || "")}${
+          task.outline ? "-outline" : ""
+        }`,
   }));
+}
+
+function escapeForClass(value) {
+  if (typeof value !== "string") {
+    return "value";
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return "value";
+  }
+  return trimmed.replace(/[^a-zA-Z0-9_-]/g, "");
 }
 
 export function buildLegend(rawTasks) {
@@ -351,27 +453,11 @@ export function createEditorDraftFromTask(task) {
   }
 
   const preset = findPresetForTask(task);
-  if (preset) {
-    return {
-      name: task.name,
-      start: toDateTimeLocal(task.start),
-      end: toDateTimeLocal(task.end),
-      colorMode: preset.key,
-      customColor: preset.color,
-      customOutline: preset.outline,
-      customLabel: preset.label,
-    };
-  }
-
-  const sanitizedColor = sanitizeHexColor(task.color) ?? DEFAULT_COLOR.color;
   return {
     name: task.name,
     start: toDateTimeLocal(task.start),
     end: toDateTimeLocal(task.end),
-    colorMode: CUSTOM_COLOR_KEY,
-    customColor: sanitizedColor,
-    customOutline: Boolean(task.outline),
-    customLabel: task.colorLabel || "",
+    colorMode: preset ? preset.key : DEFAULT_COLOR.key,
   };
 }
 
@@ -380,30 +466,12 @@ export function buildColorSpecFromDraft(draft) {
     return { error: "No task selected." };
   }
 
-  if (draft.colorMode && draft.colorMode !== CUSTOM_COLOR_KEY) {
-    const preset = getPresetByKey(draft.colorMode);
-    if (preset) {
-      return {
-        color: preset.color,
-        label: preset.label,
-        outline: preset.outline,
-        presetKey: preset.key,
-      };
-    }
-  }
-
-  const sanitizedColor =
-    sanitizeHexColor(draft.customColor) ?? sanitizeHexColor(DEFAULT_COLOR.color);
-  if (!sanitizedColor || !isValidHexColor(sanitizedColor)) {
-    return { error: "Please choose a valid colour value." };
-  }
-
-  const label = stringOrNull(draft.customLabel) ?? sanitizedColor;
+  const preset = getPresetByKey(draft.colorMode) ?? DEFAULT_COLOR;
   return {
-    color: sanitizedColor,
-    label,
-    outline: Boolean(draft.customOutline),
-    presetKey: null,
+    color: preset.color,
+    label: preset.label,
+    outline: preset.outline,
+    presetKey: preset.key,
   };
 }
 
@@ -412,47 +480,7 @@ export function getDraftColorPreview(draft) {
     return null;
   }
 
-  if (draft.colorMode && draft.colorMode !== CUSTOM_COLOR_KEY) {
-    const preset = getPresetByKey(draft.colorMode);
-    if (preset) {
-      return {
-        color: preset.color,
-        outline: preset.outline,
-        label: preset.label,
-      };
-    }
-  }
-
-  const sanitizedColor =
-    sanitizeHexColor(draft.customColor) ?? sanitizeHexColor(DEFAULT_COLOR.color);
-  return {
-    color: sanitizedColor ?? DEFAULT_COLOR.color,
-    outline: Boolean(draft.customOutline),
-    label: stringOrNull(draft.customLabel) ?? sanitizedColor ?? DEFAULT_COLOR.label,
-  };
-}
-
-export function sanitizeHexColor(value) {
-  if (typeof value !== "string") {
-    return null;
-  }
-  let hex = value.trim();
-  if (!hex) {
-    return null;
-  }
-  if (!hex.startsWith("#")) {
-    hex = `#${hex}`;
-  }
-  const shortMatch = /^#([0-9a-fA-F]{3})$/.exec(hex);
-  if (shortMatch) {
-    const [, group] = shortMatch;
-    return `#${group[0]}${group[0]}${group[1]}${group[1]}${group[2]}${group[2]}`.toLowerCase();
-  }
-  const longMatch = /^#([0-9a-fA-F]{6})$/.exec(hex);
-  if (longMatch) {
-    return `#${longMatch[1].toLowerCase()}`;
-  }
-  return null;
+  return getPresetByKey(draft.colorMode) ?? DEFAULT_COLOR;
 }
 
 export function tasksToCsv(tasks) {
@@ -643,10 +671,4 @@ function truncateLabel(value, maxLength = 28) {
   return value.length <= maxLength ? value : `${value.slice(0, maxLength - 3)}...`;
 }
 
-export {
-  COLOR_PRESETS,
-  DEFAULT_COLOR,
-  CUSTOM_COLOR_KEY,
-  DATE_FORMATTER,
-  TIME_FORMATTER,
-};
+export { COLOR_PRESETS, DEFAULT_COLOR, DATE_FORMATTER, TIME_FORMATTER };

@@ -7,10 +7,9 @@ import TaskEditor from "./components/TaskEditor";
 import TaskSidebar from "./components/TaskSidebar";
 import SummaryBar from "./components/SummaryBar";
 import ShiftModal from "./components/ShiftModal";
-import { DATASET_OPTIONS, VIEW_MODES } from "./constants/appConstants";
+import { DATASET_OPTIONS, VIEW_MODES, SORT_MODES } from "./constants/appConstants";
 import {
   COLOR_PRESETS,
-  CUSTOM_COLOR_KEY,
   DEFAULT_COLOR,
   buildColorSpecFromDraft,
   buildNewTaskName,
@@ -23,8 +22,11 @@ import {
   generateTaskId,
   getDraftColorPreview,
   parseDateTimeLocal,
+  sortTasksByEnd,
+  sortTasksByOriginalPosition,
+  sortTasksByStart,
+  toDateTimeLocal,
   reorderTasksById,
-  sanitizeHexColor,
   escapeSelector,
 } from "./utils/taskUtils";
 import {
@@ -92,6 +94,7 @@ export default function App() {
   } = useTaskManager(API_BASE_URL);
 
   const [viewMode, setViewMode] = useState("Week");
+  const [sortMode, setSortMode] = useState(SORT_MODES.ORIGINAL);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [editorDraft, setEditorDraft] = useState(null);
   const [editorError, setEditorError] = useState("");
@@ -106,6 +109,21 @@ export default function App() {
   });
   const [selectedTaskIds, setSelectedTaskIds] = useState([]);
   const [isShiftModalOpen, setIsShiftModalOpen] = useState(false);
+  const [pendingNewTask, setPendingNewTask] = useState(null);
+  const [title, setTitle] = useState(() => {
+    if (typeof window === "undefined") {
+      return "Project Timeline";
+    }
+    try {
+      const storage = typeof window !== "undefined" ? window.localStorage : null;
+      return storage?.getItem("gantt-title") || "Project Timeline";
+    } catch {
+      return "Project Timeline";
+    }
+  });
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [titleDraft, setTitleDraft] = useState("");
+  const [fatalErrorMessage, setFatalErrorMessage] = useState("");
 
   const ganttContainerRef = useRef(null);
   const chartInstanceRef = useRef(null);
@@ -116,6 +134,7 @@ export default function App() {
   const styleTagRef = useRef(null);
   const uploadInputRef = useRef(null);
   const searchInputRef = useRef(null);
+  const titleInputRef = useRef(null);
   const selectionAnchorRef = useRef(null);
   const ganttHandlersRef = useRef({ onClick: null, onDateChange: null });
   const pendingScrollRef = useRef(null);
@@ -128,11 +147,7 @@ export default function App() {
   );
   const editorColorPreview = useMemo(() => getDraftColorPreview(editorDraft), [editorDraft]);
   const colorSelectValue =
-    editorDraft?.colorMode ?? (selectedTask?.presetKey ?? DEFAULT_COLOR.key);
-  const customColorValue = useMemo(
-    () => sanitizeHexColor(editorDraft?.customColor) ?? DEFAULT_COLOR.color,
-    [editorDraft?.customColor],
-  );
+    editorDraft?.colorMode ?? selectedTask?.presetKey ?? DEFAULT_COLOR.key;
   const totalTaskCount = tasks.length;
   const selectedCount = selectedTaskIds.length;
   const hasTasks = tasks.length > 0;
@@ -166,9 +181,12 @@ export default function App() {
     if (!tasks.length) {
       return {
         count: 0,
-        earliestLabel: "—",
-        latestLabel: "—",
-        spanLabel: "—",
+        earliestLabel: "N/A",
+        latestLabel: "N/A",
+        spanLabel: "N/A",
+        progressPercent: null,
+        progressLabel: "N/A",
+        progressDateLabel: "",
       };
     }
 
@@ -189,19 +207,94 @@ export default function App() {
     if (!earliest || !latest) {
       return {
         count: tasks.length,
-        earliestLabel: "—",
-        latestLabel: "—",
-        spanLabel: "—",
+        earliestLabel: "N/A",
+        latestLabel: "N/A",
+        spanLabel: "N/A",
       };
     }
 
     const metrics = computeDurationMetrics(earliest, latest);
+    const now = new Date();
+    const totalMs = Math.max(latest.getTime() - earliest.getTime(), 0);
+    const elapsedMs = Math.min(Math.max(now.getTime() - earliest.getTime(), 0), totalMs);
+    const progressPercent = totalMs > 0 ? Math.round((elapsedMs / totalMs) * 100) : 0;
+    const progressLabel = `${progressPercent}% elapsed`;
+    const progressDateLabel = `Today · ${formatHumanDate(now)}`;
+
     return {
       count: tasks.length,
       earliestLabel: metrics?.startLabel ?? formatHumanDate(earliest),
       latestLabel: metrics?.endLabel ?? formatHumanDate(latest),
-      spanLabel: metrics?.durationLabel ?? "—",
+      spanLabel: metrics?.durationLabel ?? "N/A",
+      progressPercent,
+      progressLabel,
+      progressDateLabel,
     };
+  }, [tasks]);
+
+  const currentSortMutationMode = useMemo(() => {
+    if (sortMode === SORT_MODES.START) {
+      return "by-start";
+    }
+    if (sortMode === SORT_MODES.END) {
+      return "by-end";
+    }
+    return "preserve";
+  }, [sortMode]);
+
+  const pendingPreviewTask = useMemo(() => {
+    if (!pendingNewTask || !editorDraft) {
+      return null;
+    }
+    const startDate = parseDateTimeLocal(editorDraft.start);
+    const endDate = parseDateTimeLocal(editorDraft.end);
+    if (!startDate || !endDate) {
+      return null;
+    }
+    const metrics = computeDurationMetrics(startDate, endDate);
+    const preview = getDraftColorPreview(editorDraft) ?? DEFAULT_COLOR;
+    return {
+      id: "__pending__",
+      name: editorDraft.name ?? "",
+      start: formatIsoLocal(startDate),
+      end: formatIsoLocal(endDate),
+      startLabel: metrics.startLabel,
+      endLabel: metrics.endLabel,
+      durationLabel: metrics.durationLabel,
+      color: preview.color,
+      colorLabel: preview.label,
+      outline: preview.outline,
+    };
+  }, [editorDraft, pendingNewTask]);
+
+  const editorSubject = pendingPreviewTask ?? selectedTask;
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    try {
+      const storage = typeof window !== "undefined" ? window.localStorage : null;
+      storage?.setItem("gantt-title", title);
+    } catch {
+      // Ignore storage failures (e.g., private browsing or quota restrictions)
+    }
+  }, [title]);
+
+  const getNextOriginalPosition = useCallback(() => {
+    if (!tasks.length) {
+      return 0;
+    }
+    return (
+      tasks.reduce((max, task) => {
+        const candidate = Number.isFinite(task?.originalPosition)
+          ? Number(task.originalPosition)
+          : Number.isFinite(task?.position)
+          ? Number(task.position)
+          : 0;
+        return candidate > max ? candidate : max;
+      }, -1) + 1
+    );
   }, [tasks]);
 
   const computeBaselineForIndex = useCallback(
@@ -225,48 +318,6 @@ export default function App() {
       return now;
     },
     [tasks],
-  );
-
-  const insertTaskAtPosition = useCallback(
-    (insertIndex, baselineDate) => {
-      const safeBaseline =
-        baselineDate instanceof Date
-          ? new Date(baselineDate.getTime())
-          : new Date();
-      let createdTask = null;
-
-      mutateTasks(
-        (previous) => {
-          const startDate = new Date(safeBaseline.getTime());
-          const endDate = new Date(startDate.getTime() + DEFAULT_TASK_DURATION_MS);
-          createdTask = {
-            id: generateTaskId(),
-            name: buildNewTaskName(previous.length + 1),
-            start: formatIsoLocal(startDate),
-            end: formatIsoLocal(endDate),
-            color: DEFAULT_COLOR.color,
-            colorLabel: DEFAULT_COLOR.label,
-            outline: DEFAULT_COLOR.outline,
-            presetKey: DEFAULT_COLOR.key,
-          };
-          const next = [...previous];
-          const boundedIndex = Math.max(0, Math.min(insertIndex, next.length));
-          next.splice(boundedIndex, 0, createdTask);
-          return next;
-        },
-        { normalize: true, sortMode: "preserve" },
-      );
-
-      if (createdTask) {
-        selectionAnchorRef.current = createdTask.id;
-        setSelectedTaskId(createdTask.id);
-        setSelectedTaskIds([]);
-        setIsEditorCollapsed(false);
-        setEditorError("");
-        pendingScrollRef.current = createdTask.id;
-      }
-    },
-    [mutateTasks],
   );
 
   const focusTask = useCallback(
@@ -348,15 +399,30 @@ export default function App() {
     });
   }, [selectedTaskId, tasks]);
 
+  const discardPendingNewTask = useCallback(() => {
+    if (!pendingNewTask) {
+      return;
+    }
+    setPendingNewTask(null);
+    setEditorDraft(null);
+    setEditorError("");
+    setSelectedTaskId(null);
+    setSelectedTaskIds([]);
+    selectionAnchorRef.current = null;
+  }, [pendingNewTask]);
+
   const handleTaskClick = useCallback(
     (task) => {
+      if (pendingNewTask) {
+        discardPendingNewTask();
+      }
       if (task?.id) {
         setSelectedTaskIds([]);
         selectionAnchorRef.current = task.id;
         focusTask(task.id, { scroll: false });
       }
     },
-    [focusTask],
+    [discardPendingNewTask, focusTask, pendingNewTask],
   );
 
   const handleDateChange = useCallback(
@@ -372,6 +438,13 @@ export default function App() {
       const startIso = formatIsoLocal(startDate);
       const endIso = formatIsoLocal(endDate);
       const startChanged = startIso !== task.start;
+      const endChanged = endIso !== task.end;
+      let sortDirective = currentSortMutationMode;
+      if (sortMode === SORT_MODES.START && (startChanged || endChanged)) {
+        sortDirective = "by-start";
+      } else if (sortMode === SORT_MODES.END && (startChanged || endChanged)) {
+        sortDirective = "by-end";
+      }
 
       mutateTasks(
         (previous) =>
@@ -384,10 +457,10 @@ export default function App() {
                 }
               : item,
           ),
-        { normalize: true, sortMode: startChanged ? "by-start" : "preserve" },
+        { normalize: true, sortMode: sortDirective },
       );
     },
-    [mutateTasks],
+    [currentSortMutationMode, mutateTasks, sortMode],
   );
 
   useEffect(() => {
@@ -581,6 +654,9 @@ export default function App() {
   }, [editorDatesInvalid, editorError]);
 
   useEffect(() => {
+    if (pendingNewTask) {
+      return;
+    }
     if (!selectedTask) {
       setEditorDraft(null);
       setEditorError("");
@@ -588,20 +664,129 @@ export default function App() {
     }
     setEditorDraft(createEditorDraftFromTask(selectedTask));
     setEditorError("");
-  }, [selectedTask]);
+  }, [pendingNewTask, selectedTask]);
+
+  useEffect(() => {
+    setSortMode(SORT_MODES.ORIGINAL);
+    setPendingNewTask(null);
+    setEditorDraft(null);
+    setEditorError("");
+    setSelectedTaskId(null);
+    setSelectedTaskIds([]);
+    selectionAnchorRef.current = null;
+    mutateTasks((previous) => [...previous], { sortMode: "by-original" });
+  }, [datasetMode, mutateTasks]);
+
+  useEffect(() => {
+    const handleWindowError = (event) => {
+      const message = event?.message || event?.error?.message;
+      if (message) {
+        setFatalErrorMessage(message);
+      }
+    };
+    const handleUnhandledRejection = (event) => {
+      const reason = event?.reason;
+      const message =
+        reason?.message || event?.message || (typeof reason === "string" ? reason : "");
+      if (message) {
+        setFatalErrorMessage(message);
+      }
+    };
+    window.addEventListener("error", handleWindowError);
+    window.addEventListener("unhandledrejection", handleUnhandledRejection);
+    return () => {
+      window.removeEventListener("error", handleWindowError);
+      window.removeEventListener("unhandledrejection", handleUnhandledRejection);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isEditingTitle) {
+      requestAnimationFrame(() => {
+        titleInputRef.current?.focus();
+        titleInputRef.current?.select();
+      });
+    }
+  }, [isEditingTitle]);
 
   const handleDatasetChange = useCallback(
     (event) => {
-      selectDataset(event.target.value);
+      const value = event.target.value;
+      setPendingNewTask(null);
+      setEditorDraft(null);
+      setEditorError("");
+      setSelectedTaskId(null);
+      setSelectedTaskIds([]);
+      selectionAnchorRef.current = null;
+      selectDataset(value);
     },
     [selectDataset],
   );
+
+  const handleSortChange = useCallback(
+    (event) => {
+      const mode = event.target.value;
+      if (
+        mode !== SORT_MODES.ORIGINAL &&
+        mode !== SORT_MODES.START &&
+        mode !== SORT_MODES.END
+      ) {
+        return;
+      }
+      setSortMode(mode);
+      const sortDirective =
+        mode === SORT_MODES.START
+          ? "by-start"
+          : mode === SORT_MODES.END
+          ? "by-end"
+          : "by-original";
+      mutateTasks((previous) => [...previous], { normalize: false, sortMode: sortDirective });
+    },
+    [mutateTasks],
+  );
+
+  const handleTitleChange = useCallback((event) => {
+    setTitleDraft(event.target.value);
+  }, []);
+
+  const commitTitle = useCallback(() => {
+    const trimmed = titleDraft.trim();
+    if (trimmed) {
+      setTitle(trimmed);
+    }
+    setIsEditingTitle(false);
+  }, [titleDraft]);
+
+  const handleTitleDoubleClick = useCallback(() => {
+    setTitleDraft(title);
+    setIsEditingTitle(true);
+  }, [title]);
+
+  const handleTitleKeyDown = useCallback(
+    (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        commitTitle();
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        setIsEditingTitle(false);
+      }
+    },
+    [commitTitle],
+  );
+
+  const handleTitleBlur = useCallback(() => {
+    commitTitle();
+  }, [commitTitle]);
 
   const handleSidebarTaskClick = useCallback(
     (
       taskId,
       { shiftKey = false, metaKey = false, ctrlKey = false } = {},
     ) => {
+      if (pendingNewTask) {
+        discardPendingNewTask();
+      }
       const multiKey = metaKey || ctrlKey;
       const hasSelection = selectedTaskIds.length > 0;
       const anchor =
@@ -652,7 +837,7 @@ export default function App() {
       selectionAnchorRef.current = taskId;
       focusTask(taskId, { scroll: true, ensureEditorOpen: true });
     },
-    [focusTask, selectedTaskId, selectedTaskIds, tasks],
+    [discardPendingNewTask, focusTask, pendingNewTask, selectedTaskId, selectedTaskIds, tasks],
   );
 
   const handleToggleTaskSelection = useCallback(
@@ -722,6 +907,32 @@ export default function App() {
     [importFromFile],
   );
 
+  const beginCreateTask = useCallback(
+    (insertIndex, baselineDate) => {
+      const startDate =
+        baselineDate instanceof Date ? new Date(baselineDate.getTime()) : new Date();
+      const endDate = new Date(startDate.getTime() + DEFAULT_TASK_DURATION_MS);
+      const draft = {
+        name: buildNewTaskName(tasks.length + 1),
+        start: toDateTimeLocal(startDate),
+        end: toDateTimeLocal(endDate),
+        colorMode: DEFAULT_COLOR.key,
+      };
+      setPendingNewTask({
+        insertIndex,
+        baselineStart: startDate.toISOString(),
+        baselineEnd: endDate.toISOString(),
+      });
+      setEditorDraft(draft);
+      setEditorError("");
+      setIsEditorCollapsed(false);
+      setSelectedTaskId(null);
+      setSelectedTaskIds([]);
+      selectionAnchorRef.current = null;
+    },
+    [tasks.length],
+  );
+
   const handleAddTask = useCallback(() => {
     const anchorId =
       selectionAnchorRef.current ??
@@ -736,10 +947,10 @@ export default function App() {
       }
     }
     const baseline = computeBaselineForIndex(insertIndex);
-    insertTaskAtPosition(insertIndex, baseline);
+    beginCreateTask(insertIndex, baseline);
   }, [
+    beginCreateTask,
     computeBaselineForIndex,
-    insertTaskAtPosition,
     selectedTaskId,
     selectedTaskIds,
     tasks,
@@ -748,20 +959,25 @@ export default function App() {
   const handleInsertTaskAtIndex = useCallback(
     (index) => {
       const baseline = computeBaselineForIndex(index);
-      insertTaskAtPosition(index, baseline);
+      beginCreateTask(index, baseline);
     },
-    [computeBaselineForIndex, insertTaskAtPosition],
+    [beginCreateTask, computeBaselineForIndex],
   );
 
   const handleDeleteTask = useCallback(() => {
+    if (pendingNewTask) {
+      discardPendingNewTask();
+      return;
+    }
     if (!selectedTask) {
       return;
     }
     mutateTasks((previous) => previous.filter((task) => task.id !== selectedTask.id), {
       normalize: true,
+      sortMode: currentSortMutationMode,
     });
     setSelectedTaskId(null);
-  }, [mutateTasks, selectedTask]);
+  }, [currentSortMutationMode, discardPendingNewTask, mutateTasks, pendingNewTask, selectedTask]);
 
   const handleEditorFieldChange = useCallback((event) => {
     const { name, type, value, checked } = event.target;
@@ -782,73 +998,86 @@ export default function App() {
 
   const handleColorModeChange = useCallback((event) => {
     const value = event.target.value;
+    const preset = COLOR_PRESETS.find((item) => item.key === value) ?? DEFAULT_COLOR;
     setEditorDraft((prev) => {
       if (!prev) {
-        return prev;
-      }
-      if (value === CUSTOM_COLOR_KEY) {
-        return {
-          ...prev,
-          colorMode: CUSTOM_COLOR_KEY,
-        };
-      }
-      const preset = COLOR_PRESETS.find((item) => item.key === value);
-      if (!preset) {
         return prev;
       }
       return {
         ...prev,
         colorMode: preset.key,
-        customColor: preset.color,
-        customOutline: preset.outline,
-        customLabel: preset.label,
       };
     });
     setEditorError("");
   }, []);
 
-  const handleCustomColorChange = useCallback((event) => {
-    const rawValue = event.target.value;
-    setEditorDraft((prev) => {
-      if (!prev) {
-        return prev;
-      }
-      const sanitized = sanitizeHexColor(rawValue) ?? sanitizeHexColor(prev.customColor);
-      return {
-        ...prev,
-        colorMode: CUSTOM_COLOR_KEY,
-        customColor: sanitized ?? DEFAULT_COLOR.color,
-      };
-    });
+  const handleApplyColorToSelection = useCallback(() => {
+    if (!editorDraft) {
+      return;
+    }
+    const colorSpec = buildColorSpecFromDraft(editorDraft);
+    if (colorSpec?.error) {
+      setEditorError(colorSpec.error);
+      return;
+    }
+    const targetIds = new Set(selectedTaskIds);
+    if (!targetIds.size && selectedTaskId) {
+      targetIds.add(selectedTaskId);
+    }
+    if (!targetIds.size) {
+      setEditorError("Select at least one task to apply colour.");
+      return;
+    }
+    mutateTasks(
+      (previous) =>
+        previous.map((task) =>
+          targetIds.has(task.id)
+            ? {
+                ...task,
+                color: colorSpec.color,
+                colorLabel: colorSpec.label,
+                outline: colorSpec.outline,
+                presetKey: colorSpec.presetKey ?? null,
+              }
+            : task,
+        ),
+      { normalize: true, sortMode: currentSortMutationMode },
+    );
     setEditorError("");
-  }, []);
-
-  const handleCustomLabelChange = useCallback((event) => {
-    const value = event.target.value;
-    setEditorDraft((prev) => {
-      if (!prev) {
-        return prev;
-      }
-      return {
-        ...prev,
-        colorMode: CUSTOM_COLOR_KEY,
-        customLabel: value,
-      };
-    });
-  }, []);
+  }, [
+    currentSortMutationMode,
+    editorDraft,
+    mutateTasks,
+    selectedTaskId,
+    selectedTaskIds,
+  ]);
 
   const handleEditorReset = useCallback(() => {
+    if (pendingNewTask) {
+      const startDate = coerceToDate(pendingNewTask.baselineStart) ?? new Date();
+      const endDate =
+        coerceToDate(pendingNewTask.baselineEnd) ??
+        new Date(startDate.getTime() + DEFAULT_TASK_DURATION_MS);
+      setEditorDraft({
+        name: buildNewTaskName(tasks.length + 1),
+        start: toDateTimeLocal(startDate),
+        end: toDateTimeLocal(endDate),
+        colorMode: DEFAULT_COLOR.key,
+      });
+      setEditorError("");
+      return;
+    }
     if (!selectedTask) {
       return;
     }
     setEditorDraft(createEditorDraftFromTask(selectedTask));
     setEditorError("");
-  }, [selectedTask]);
+  }, [pendingNewTask, selectedTask, tasks.length]);
 
   const handleEditorSubmit = useCallback(
     (event) => {
       event.preventDefault();
-      if (!selectedTask || !editorDraft) {
+      if (!editorDraft) {
         return;
       }
 
@@ -877,7 +1106,57 @@ export default function App() {
 
       const startIso = formatIsoLocal(startDate);
       const endIso = formatIsoLocal(endDate);
+
+      if (pendingNewTask) {
+        const newId = generateTaskId();
+        const insertIndex = Math.max(
+          0,
+          Math.min(pendingNewTask.insertIndex ?? tasks.length, tasks.length),
+        );
+        const originalPosition = getNextOriginalPosition();
+
+        mutateTasks(
+          (previous) => {
+            const next = [...previous];
+            const draftRecord = {
+              id: newId,
+              name: trimmedName,
+              start: startIso,
+              end: endIso,
+              color: colorSpec.color,
+              colorLabel: colorSpec.label,
+              outline: colorSpec.outline,
+              presetKey: colorSpec.presetKey ?? null,
+              position: insertIndex,
+              originalPosition,
+            };
+            next.splice(insertIndex, 0, draftRecord);
+            return next;
+          },
+          { normalize: true, sortMode: currentSortMutationMode },
+        );
+
+        setPendingNewTask(null);
+        setEditorError("");
+        setSelectedTaskIds([]);
+        selectionAnchorRef.current = newId;
+        setSelectedTaskId(newId);
+        pendingScrollRef.current = newId;
+        return;
+      }
+
+      if (!selectedTask) {
+        return;
+      }
+
       const startChanged = startIso !== selectedTask.start;
+      const endChanged = endIso !== selectedTask.end;
+      let sortDirective = currentSortMutationMode;
+      if (sortMode === SORT_MODES.START && (startChanged || endChanged)) {
+        sortDirective = "by-start";
+      } else if (sortMode === SORT_MODES.END && (startChanged || endChanged)) {
+        sortDirective = "by-end";
+      }
 
       mutateTasks(
         (previous) =>
@@ -895,12 +1174,21 @@ export default function App() {
                 }
               : task,
           ),
-        { normalize: true, sortMode: startChanged ? "by-start" : "preserve" },
+        { normalize: true, sortMode: sortDirective },
       );
 
       setEditorError("");
     },
-    [editorDatesInvalid, editorDraft, mutateTasks, selectedTask],
+    [
+      currentSortMutationMode,
+      editorDatesInvalid,
+      editorDraft,
+      getNextOriginalPosition,
+      mutateTasks,
+      pendingNewTask,
+      selectedTask,
+      sortMode,
+    ],
   );
 
   const handleExport = useCallback(() => {
@@ -1015,12 +1303,12 @@ export default function App() {
               end: formatIsoLocal(new Date(endDate.getTime() + offset)),
             };
           }),
-        { normalize: true, sortMode: "by-start" },
+        { normalize: true, sortMode: currentSortMutationMode },
       );
 
       setIsShiftModalOpen(false);
     },
-    [mutateTasks, selectedTaskIds],
+    [currentSortMutationMode, mutateTasks, selectedTaskIds],
   );
 
   const handleSidebarDragStart = useCallback(
@@ -1186,15 +1474,36 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [redo, undo]);
 
-  return (
-    <div className="layout">
-      <header className="layout__header">
-        <div className="layout__headline">
-          <h1>Project Timeline</h1>
-          <p className="subtitle">Real-time project scheduling dashboard for teams</p>
-        </div>
-        <SummaryBar summary={scheduleSummary} datasetLabel={datasetLabel} />
-      </header>
+  let content;
+  try {
+    content = (
+      <div className="layout">
+        {fatalErrorMessage ? (
+          <div className="fatal-error-banner" role="alert">
+            <strong>Runtime error:</strong> {fatalErrorMessage}
+          </div>
+        ) : null}
+        <header className="layout__header">
+          <div className="layout__headline">
+            {isEditingTitle ? (
+              <input
+                ref={titleInputRef}
+                className="layout__title-input"
+                value={titleDraft}
+                onChange={handleTitleChange}
+                onBlur={handleTitleBlur}
+                onKeyDown={handleTitleKeyDown}
+                aria-label="Project title"
+              />
+            ) : (
+              <h1 onDoubleClick={handleTitleDoubleClick} title="Double-click to rename project">
+                {title}
+              </h1>
+            )}
+            <p className="subtitle">Real-time project scheduling dashboard for teams</p>
+          </div>
+          <SummaryBar summary={scheduleSummary} datasetLabel={datasetLabel} />
+        </header>
 
       <Toolbar
         datasetMode={datasetMode}
@@ -1204,128 +1513,158 @@ export default function App() {
         onAddTask={handleAddTask}
         onExport={handleExport}
         onImportClick={handleUploadClick}
-        onUndo={undo}
-        onRedo={redo}
-        canUndo={canUndo}
-        canRedo={canRedo}
-        hasTasks={hasTasks}
-        selectedCount={selectedCount}
-        totalCount={totalTaskCount}
-        onShiftClick={openShiftModal}
-        searchQuery={searchQuery}
-        onSearchChange={handleSearchChange}
-        onSearchKeyDown={handleSearchKeyDown}
-        onSearchClear={handleSearchClear}
-        searchStatus={searchStatus}
-        onSearchPrev={handleSearchPrev}
-        onSearchNext={handleSearchNext}
-        hasSearchMatches={searchMatches.length > 0}
-        uploadInputRef={uploadInputRef}
-        onFileInputChange={handleFileInputChange}
-        searchInputRef={searchInputRef}
-      />
+          onUndo={undo}
+          onRedo={redo}
+          canUndo={canUndo}
+          canRedo={canRedo}
+          hasTasks={hasTasks}
+          selectedCount={selectedCount}
+          totalCount={totalTaskCount}
+          onShiftClick={openShiftModal}
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          onSearchKeyDown={handleSearchKeyDown}
+          onSearchClear={handleSearchClear}
+          searchStatus={searchStatus}
+          onSearchPrev={handleSearchPrev}
+          onSearchNext={handleSearchNext}
+          hasSearchMatches={searchMatches.length > 0}
+          uploadInputRef={uploadInputRef}
+          onFileInputChange={handleFileInputChange}
+          searchInputRef={searchInputRef}
+        />
 
-      <main className="layout__content">
-        {loading && <p className="status">Loading tasks...</p>}
-        {error && <p className="status status--error">{error}</p>}
-        {importError && <p className="status status--error">{importError}</p>}
-        {datasetMode === DATASET_OPTIONS.UPLOADED &&
-          hasUploadedData &&
-          uploadedName &&
-          !importError && <p className="status status--info">Showing tasks from {uploadedName}</p>}
-        {showingUploadedPlaceholder && !importError && (
-          <p className="status status--info">
-            Upload a CSV file or add tasks to populate the uploaded dataset.
-          </p>
-        )}
-        {!loading &&
-          !error &&
-          !importError &&
-          !showingUploadedPlaceholder &&
-          ganttTasks.length === 0 && (
-            <p className="status">
-              {datasetMode === DATASET_OPTIONS.EMPTY
-                ? 'No tasks yet. Use "Add Task" to start building your timeline.'
-                : "No tasks available in the dataset."}
+        <main className="layout__content">
+          {loading && <p className="status">Loading tasks...</p>}
+          {error && <p className="status status--error">{error}</p>}
+          {importError && <p className="status status--error">{importError}</p>}
+          {datasetMode === DATASET_OPTIONS.UPLOADED &&
+            hasUploadedData &&
+            uploadedName &&
+            !importError && <p className="status status--info">Showing tasks from {uploadedName}</p>}
+          {showingUploadedPlaceholder && !importError && (
+            <p className="status status--info">
+              Upload a CSV file or add tasks to populate the uploaded dataset.
             </p>
           )}
+          {!loading &&
+            !error &&
+            !importError &&
+            !showingUploadedPlaceholder &&
+            ganttTasks.length === 0 && (
+              <p className="status">
+                {datasetMode === DATASET_OPTIONS.EMPTY
+                  ? 'No tasks yet. Use "Add Task" to start building your timeline.'
+                  : "No tasks available in the dataset."}
+              </p>
+            )}
 
-        <TaskEditor
-          selectedTask={selectedTask}
-          isCollapsed={isEditorCollapsed}
-          onToggleCollapse={() => setIsEditorCollapsed((prev) => !prev)}
-          onDelete={handleDeleteTask}
-          onSubmit={handleEditorSubmit}
+          <TaskEditor
+            selectedTask={editorSubject}
+            isCreating={Boolean(pendingNewTask)}
+            isCollapsed={isEditorCollapsed}
+            onToggleCollapse={() => setIsEditorCollapsed((prev) => !prev)}
+            onDelete={handleDeleteTask}
+            onDiscardNew={discardPendingNewTask}
+            onSubmit={handleEditorSubmit}
           onReset={handleEditorReset}
           draft={editorDraft}
           onFieldChange={handleEditorFieldChange}
           onColorModeChange={handleColorModeChange}
-          onCustomColorChange={handleCustomColorChange}
-          onCustomLabelChange={handleCustomLabelChange}
           colorSelectValue={String(colorSelectValue)}
           colorPresets={COLOR_PRESETS}
           colorPreview={editorColorPreview}
-          customColorValue={customColorValue}
           isDateInvalid={editorDatesInvalid}
           dateErrorMessage={DATE_ERROR_MESSAGE}
           disableSubmit={editorDatesInvalid}
           editorError={editorError}
-          customModeValue={CUSTOM_COLOR_KEY}
+          canApplyColorToSelection={selectedTaskIds.length > 0}
+          onApplyColorToSelection={handleApplyColorToSelection}
         />
-        <div className="gantt-wrapper">
-          <div className="gantt-view" role="group" aria-label="Timeline view mode">
-            <span className="gantt-view__label">View</span>
-            <div className="gantt-view__buttons">
-              {VIEW_MODES.map((mode) => (
-                <button
-                  key={mode}
-                  type="button"
-                  className={`gantt-view__button${viewMode === mode ? " gantt-view__button--active" : ""}`}
-                  onClick={() => setViewMode(mode)}
+          <div className="gantt-wrapper">
+            <div className="gantt-controls">
+              <div className="gantt-view" role="group" aria-label="Timeline view mode">
+                <span className="gantt-view__label">View</span>
+                <div className="gantt-view__buttons">
+                  {VIEW_MODES.map((mode) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      className={`gantt-view__button${viewMode === mode ? " gantt-view__button--active" : ""}`}
+                      onClick={() => setViewMode(mode)}
+                    >
+                      {mode}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="gantt-sort">
+                <label className="gantt-sort__label" htmlFor="gantt-sort-select">
+                  Sort
+                </label>
+                <select
+                  id="gantt-sort-select"
+                  className="gantt-sort__select"
+                  value={sortMode}
+                  onChange={handleSortChange}
                 >
-                  {mode}
-                </button>
-              ))}
+                  <option value={SORT_MODES.ORIGINAL}>Original order</option>
+                  <option value={SORT_MODES.START}>Start date</option>
+                  <option value={SORT_MODES.END}>Completion date</option>
+                </select>
+              </div>
+            </div>
+            <div className="gantt-scrollbar" ref={topScrollbarRef}>
+              <div className="gantt-scrollbar__shim" />
+            </div>
+            <div className="gantt-shell">
+              <TaskSidebar
+                tasks={ganttTasks}
+                selectedTaskId={selectedTaskId}
+                selectedTaskIds={selectedTaskIds}
+                onTaskClick={handleSidebarTaskClick}
+                onToggleTaskSelection={handleToggleTaskSelection}
+                onToggleSelectAll={handleToggleSelectAll}
+                onInsertAtIndex={handleInsertTaskAtIndex}
+                sidebarRootRef={sidebarRootRef}
+                sidebarInnerRef={sidebarInnerRef}
+                dragState={dragState}
+                onDragStart={handleSidebarDragStart}
+                onDragOver={handleSidebarDragOver}
+                onDragLeave={handleSidebarDragLeave}
+                onDrop={handleSidebarDrop}
+                onDragEnd={handleSidebarDragEnd}
+                onContainerDragOver={handleSidebarContainerDragOver}
+                onContainerDrop={handleSidebarContainerDrop}
+              />
+              <div className="gantt-main" ref={mainScrollRef}>
+                <div ref={ganttContainerRef} className="gantt-container" />
+              </div>
             </div>
           </div>
-          <div className="gantt-scrollbar" ref={topScrollbarRef}>
-            <div className="gantt-scrollbar__shim" />
-          </div>
-          <div className="gantt-shell">
-            <TaskSidebar
-              tasks={ganttTasks}
-              selectedTaskId={selectedTaskId}
-              selectedTaskIds={selectedTaskIds}
-              onTaskClick={handleSidebarTaskClick}
-              onToggleTaskSelection={handleToggleTaskSelection}
-              onToggleSelectAll={handleToggleSelectAll}
-              onInsertAtIndex={handleInsertTaskAtIndex}
-              sidebarRootRef={sidebarRootRef}
-              sidebarInnerRef={sidebarInnerRef}
-              dragState={dragState}
-              onDragStart={handleSidebarDragStart}
-              onDragOver={handleSidebarDragOver}
-              onDragLeave={handleSidebarDragLeave}
-              onDrop={handleSidebarDrop}
-              onDragEnd={handleSidebarDragEnd}
-              onContainerDragOver={handleSidebarContainerDragOver}
-              onContainerDrop={handleSidebarContainerDrop}
-            />
-            <div className="gantt-main" ref={mainScrollRef}>
-              <div ref={ganttContainerRef} className="gantt-container" />
-            </div>
-          </div>
+        </main>
+        <ShiftModal
+          isOpen={isShiftModalOpen}
+          onClose={handleCloseShiftModal}
+          onSubmit={handleShiftSubmit}
+          selectedCount={selectedCount}
+          totalCount={totalTaskCount}
+        />
+      </div>
+    );
+  } catch (renderError) {
+    console.error(renderError);
+    content = (
+      <div className="layout layout--error">
+        <div className="fatal-error">
+          <h1>Something went wrong</h1>
+          <p>{fatalErrorMessage || renderError?.message || "Unknown error"}</p>
         </div>
-      </main>
-      <ShiftModal
-        isOpen={isShiftModalOpen}
-        onClose={handleCloseShiftModal}
-        onSubmit={handleShiftSubmit}
-        selectedCount={selectedCount}
-        totalCount={totalTaskCount}
-      />
-    </div>
-  );
+      </div>
+    );
+  }
+
+  return content;
 }
 
 function stripTrailingSlash(value) {

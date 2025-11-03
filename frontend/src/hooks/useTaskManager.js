@@ -7,6 +7,8 @@ import {
   formatDateForFilename,
   normaliseTaskCollection,
   sortTasksByStart,
+  sortTasksByEnd,
+  sortTasksByOriginalPosition,
   stripCsvExtension,
   tasksToCsv,
 } from "../utils/taskUtils";
@@ -152,8 +154,21 @@ export default function useTaskManager(apiBaseUrl) {
         const candidate = typeof mutator === "function" ? mutator(previousSnapshot) : mutator;
         const asArray = Array.isArray(candidate) ? candidate : [];
         const base = normalize ? normaliseTaskCollection(asArray) : ensureStableOrder(asArray);
-        const next =
-          sortMode === "by-start" ? sortTasksByStart(base) : ensureStableOrder(base);
+        let next;
+        switch (sortMode) {
+          case "by-start":
+            next = sortTasksByStart(base);
+            break;
+          case "by-end":
+            next = sortTasksByEnd(base);
+            break;
+          case "by-original":
+            next = sortTasksByOriginalPosition(base);
+            break;
+          default:
+            next = ensureStableOrder(base);
+            break;
+        }
 
         if (areTaskArraysEqual(current, next)) {
           return previous;
@@ -375,6 +390,7 @@ function areTasksEqual(a, b) {
     "color",
     "colorLabel",
     "outline",
+    "presetKey",
     "durationLabel",
     "durationHours",
     "durationDays",

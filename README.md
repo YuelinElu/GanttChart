@@ -34,7 +34,7 @@ Named colours in the CSV are mapped to a consistent palette:
 }
 ```
 
-Unknown colour values fall back to the raw CSS colour (if valid) or a neutral indigo accent.
+Unknown colour values fall back to the Orange preset so the chart never renders empty bars.
 
 
 Project structure
@@ -92,7 +92,7 @@ With both servers running, open `http://localhost:5173` and use the control bar 
 
 - **Dataset selector** - `Show default` loads `data/data.csv`, `Show empty` provides a blank canvas, and `Show uploaded` switches to an uploaded CSV (same columns as the default dataset).
 - **Import CSV** - upload any CSV in the documented format; it renders instantly in the browser, using the same colour mapping as the backend.
-- **Add / edit / delete tasks** - select a task (from the chart or the frozen task list) to edit its name and datetimes, choose a palette colour or pick a custom hex (with optional outline), drag bars to reschedule, or delete tasks outright. Durations and tooltips stay in sync automatically.
+- **Add / edit / delete tasks** - select a task (from the chart or the frozen task list) to edit its name and datetimes, choose from the preset palette (Orange, Grey, Black, Black Outline), drag bars to reschedule, or delete tasks outright. Durations and tooltips stay in sync automatically.
 - **Undo / Redo** - use the toolbar buttons or shortcuts (`Ctrl+Z`, `Ctrl+Shift+Z`, `Ctrl+Y`) to step backward or forward through your edits without refreshing.
 - **Search tasks** - type in the search box to highlight matches, then use Prev/Next (or Enter/Shift+Enter) to cycle through them -- the chart and task list scroll into view automatically.
 - **Task details panel** - collapse the detail drawer when you want maximum Gantt real estate, and expand it again to edit the selected task.
@@ -121,7 +121,7 @@ Features implemented
 - FastAPI endpoints (`/api/tasks`, `/healthz`) with CORS enabled for the Vite proxy.
 - React workspace (`frontend/src/App.jsx`) featuring dataset switching, CSV import/export, adding/deleting tasks, inline editing, and drag-to-reschedule support.
 - Drag-and-drop task reordering keeps the sidebar and bars aligned without touching dates.
-- Palette selector and custom colour picker (with outline toggle) in the task editor so each bar can match your preferred styling.
+- Palette selector with curated colour presets (including outline-only styling) in the task editor so each bar can match your preferred styling.
 - Search box with previous/next navigation that jumps the timeline and sidebar to each matching task.
 - Collapsible task detail drawer so you can keep the focus on the chart when you only need a quick glance.
 - Client-side undo/redo history with keyboard shortcuts (Ctrl+Z / Ctrl+Shift+Z / Ctrl+Y) so edits are reversible without reloading.

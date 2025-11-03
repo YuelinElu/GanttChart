@@ -2,27 +2,31 @@ import PropTypes from "prop-types";
 
 export default function TaskEditor({
   selectedTask,
+  isCreating,
   isCollapsed,
   onToggleCollapse,
   onDelete,
+  onDiscardNew,
   onSubmit,
   onReset,
   draft,
   onFieldChange,
   onColorModeChange,
-  onCustomColorChange,
-  onCustomLabelChange,
   colorSelectValue,
   colorPresets,
   colorPreview,
-  customColorValue,
   isDateInvalid,
   dateErrorMessage,
   disableSubmit,
   editorError,
-  customModeValue,
+  canApplyColorToSelection,
+  onApplyColorToSelection,
 }) {
   const showGlobalError = editorError && editorError !== dateErrorMessage;
+  const hasTask = Boolean(selectedTask);
+  const deleteDisabled = !isCreating && !hasTask;
+  const deleteLabel = isCreating ? "Discard task" : "Delete task";
+  const handleDeleteClick = isCreating ? onDiscardNew : onDelete;
 
   return (
     <section className="editor" aria-label="Task editor">
@@ -33,17 +37,22 @@ export default function TaskEditor({
             type="button"
             className="editor__toggle"
             onClick={onToggleCollapse}
-            disabled={!selectedTask}
+            disabled={!hasTask}
           >
             {isCollapsed ? "Show details" : "Hide details"}
           </button>
         </div>
-        <button type="button" className="editor__delete" onClick={onDelete} disabled={!selectedTask}>
-          Delete task
+        <button
+          type="button"
+          className="editor__delete"
+          onClick={handleDeleteClick}
+          disabled={deleteDisabled}
+        >
+          {deleteLabel}
         </button>
       </div>
 
-      {selectedTask ? (
+      {hasTask ? (
         isCollapsed ? (
           <div className="editor__collapsed" role="status" aria-live="polite">
             <p className="editor__collapsed-name" title={selectedTask.name}>
@@ -125,48 +134,24 @@ export default function TaskEditor({
                           {preset.label}
                         </option>
                       ))}
-                      <option value={customModeValue}>Custom</option>
                     </select>
                     <span className="editor__color-label">
-                      {colorPreview?.label || "Custom colour"}
+                      {colorPreview?.label || "Colour"}
                     </span>
                   </div>
-                  {draft?.colorMode === customModeValue && (
-                    <div className="editor__color-custom">
-                      <label className="editor__color-picker">
-                        <input
-                          type="color"
-                          value={customColorValue}
-                          onChange={onCustomColorChange}
-                          aria-label="Select colour"
-                        />
-                        <span>{customColorValue.toUpperCase()}</span>
-                      </label>
-                      <label className="editor__checkbox">
-                        <input
-                          type="checkbox"
-                          name="customOutline"
-                          checked={Boolean(draft?.customOutline)}
-                          onChange={onFieldChange}
-                        />
-                        <span>Outline only</span>
-                      </label>
-                      <label className="editor__field editor__field--nested" htmlFor="task-color-label">
-                        <span>Colour label</span>
-                        <input
-                          id="task-color-label"
-                          name="customLabel"
-                          type="text"
-                          className="editor__input"
-                          value={draft?.customLabel ?? ""}
-                          onChange={onCustomLabelChange}
-                          placeholder="Legend label (optional)"
-                        />
-                      </label>
-                    </div>
-                  )}
                 </div>
               </label>
+              {canApplyColorToSelection && (
+                <div className="editor__field editor__field--full">
+                  <button
+                    type="button"
+                    className="editor__button editor__button--ghost"
+                    onClick={onApplyColorToSelection}
+                  >
+                    Apply colour to selected tasks
+                  </button>
+                </div>
+              )}
             </div>
             {showGlobalError && <p className="editor__error">{editorError}</p>}
             <div className="editor__meta">
@@ -203,9 +188,11 @@ TaskEditor.propTypes = {
     endLabel: PropTypes.string.isRequired,
     durationLabel: PropTypes.string.isRequired,
   }),
+  isCreating: PropTypes.bool,
   isCollapsed: PropTypes.bool.isRequired,
   onToggleCollapse: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+  onDiscardNew: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   onReset: PropTypes.func.isRequired,
   draft: PropTypes.shape({
@@ -213,14 +200,9 @@ TaskEditor.propTypes = {
     start: PropTypes.string,
     end: PropTypes.string,
     colorMode: PropTypes.string,
-    customColor: PropTypes.string,
-    customOutline: PropTypes.bool,
-    customLabel: PropTypes.string,
   }),
   onFieldChange: PropTypes.func.isRequired,
   onColorModeChange: PropTypes.func.isRequired,
-  onCustomColorChange: PropTypes.func.isRequired,
-  onCustomLabelChange: PropTypes.func.isRequired,
   colorSelectValue: PropTypes.string.isRequired,
   colorPresets: PropTypes.arrayOf(
     PropTypes.shape({
@@ -235,20 +217,23 @@ TaskEditor.propTypes = {
     outline: PropTypes.bool,
     label: PropTypes.string,
   }),
-  customColorValue: PropTypes.string.isRequired,
   isDateInvalid: PropTypes.bool,
   dateErrorMessage: PropTypes.string,
   disableSubmit: PropTypes.bool,
   editorError: PropTypes.string,
-  customModeValue: PropTypes.string.isRequired,
+  canApplyColorToSelection: PropTypes.bool,
+  onApplyColorToSelection: PropTypes.func,
 };
 
 TaskEditor.defaultProps = {
   selectedTask: null,
+  isCreating: false,
   draft: null,
   colorPreview: null,
   isDateInvalid: false,
   dateErrorMessage: "",
   disableSubmit: false,
   editorError: "",
+  canApplyColorToSelection: false,
+  onApplyColorToSelection: undefined,
 };

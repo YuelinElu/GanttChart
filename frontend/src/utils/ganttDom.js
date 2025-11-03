@@ -54,6 +54,15 @@ ${selector} text {
       return;
     }
 
+    if (task.custom_class) {
+      wrapper.classList.forEach((cls) => {
+        if (cls.startsWith("task-color-")) {
+          wrapper.classList.remove(cls);
+        }
+      });
+      wrapper.classList.add(task.custom_class);
+    }
+
     const bar = wrapper.querySelector(".bar");
     const barProgress = wrapper.querySelector(".bar-progress");
     const label = wrapper.querySelector("text");

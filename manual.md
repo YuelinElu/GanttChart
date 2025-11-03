@@ -27,11 +27,14 @@ For installation and deployment steps, see `README.md`.
 
 | Area | Description |
 |------|-------------|
-| **Toolbar** | Dataset selector, import/export, undo/redo, bulk shift, add task, global search. A badge reflects how many tasks are selected. |
+| **Toolbar** | Dataset selector, sort dropdown (Original / Start / Completion), import/export, undo/redo, bulk shift, add task, global search. The selection badge shows how many tasks are in scope. |
+| **Summary bar** | Totals and milestones (task count, earliest start, latest finish, overall span) update with every edit so you always see schedule health at a glance. |
 | **View controls** | Day / Week / Month toggle situated directly above the chart. |
 | **Task sidebar** | Frozen task list that stays aligned with the Gantt rows; supports drag-and-drop reordering and multi-select. |
 | **Timeline** | Interactive bars (drag to reschedule, click to focus). Sticky horizontal scrollbar sits above the chart. |
 | **Task editor** | Detailed panel on the right for editing names, dates, and colours; collapsible when you need more canvas space. |
+
+- **Rename the dashboard** at any time by double-clicking the header title; the custom label is remembered in your browser.
 
 ---
 
@@ -49,6 +52,11 @@ For installation and deployment steps, see `README.md`.
 
 - **Export CSV**
   - Click **Export** to download the current timeline (including edits). Filenames include a timestamp or the uploaded file name.
+- **Sort dropdown**
+  - *Original order*: restores the source file order (newly created tasks appear at the end).
+  - *Start date*: keeps the earliest start at the top; the list reflows automatically after relevant edits.
+  - *Completion date*: ranks tasks by finish time so you can focus on impending deadlines.
+  - Your manual drag order is preserved—switch back to *Original order* to revisit the baseline.
 
 ---
 
@@ -65,7 +73,7 @@ For installation and deployment steps, see `README.md`.
 ## 5. Selecting tasks
 
 - **Single select** – Click any task bar or sidebar entry. The task editor updates and checkboxes stay hidden.
-- **Toggle select** – Hold **Ctrl** (Windows/Linux) or **⌘** (macOS) and click tasks to add/remove them from the selection.
+- **Toggle select** – Hold **Ctrl** (Windows/Linux) or **?** (macOS) and click tasks to add/remove them from the selection.
 - **Range select** – Click a starting task, hold **Shift**, then click the ending task. Every task in between is selected.
 - **Select all / clear all** – Once multi-select is active, a checkbox in the sidebar header toggles the entire list.
 - Hover between rows to reveal an "Add task here" control where you can insert a task exactly where you need it.
@@ -80,8 +88,8 @@ For installation and deployment steps, see `README.md`.
 2. Update **Name**, **Start**, **End** (minute resolution).
    - Inline validation highlights invalid ranges and disables **Save changes** until Start and End make sense.
 3. Choose a colour:
-   - Preset palette entries (Orange, Grey, Black, Indigo, Black ->utline).
-   - **Custom** mode with a hex picker, outline toggle, and optional legend label.
+   - Preset palette entries (Orange, Grey, Black, Black Outline).
+   - Multi-select a set of tasks and click **Apply colour to selected tasks** to push the current colour/outline to all of them at once.
 4. Use **Save changes** to persist, or **Reset** to restore the last saved state.
 5. Collapse the panel with the toggle in the header when you want maximum Gantt space.
 
@@ -92,8 +100,8 @@ For installation and deployment steps, see `README.md`.
 
 ### 6.3 Add / delete / undo / redo
 
-- **Add Task** creates a 4-hour entry near the focused task’s start time (or “now” if nothing is selected).
-- **Delete task** removes the focused task.
+- **Add Task** launches a draft (4-hour window by default) near the focused task or current time. Tweak the fields and click **Save changes** to add it; use **Discard task** or **Reset** if you change your mind.
+- **Delete task** removes the focused task (or discards the draft when you're creating a new task).
 - **Undo / Redo** via:
   - Toolbar buttons
   - `Ctrl + Z`
@@ -119,8 +127,9 @@ For installation and deployment steps, see `README.md`.
   - Orange -> `#f5642d`
   - Grey -> `#a9a9a9`
   - Black -> `#000000`
-  - Black ->utline → `#000000` (drawn as an outline-only bar)
-- Custom hex values are supported; outline-only mode helps when using darker tones.
+  - Black Outline -> `#000000` (drawn as an outline-only bar)
+- Custom hex values are intentionally disabled to keep the palette consistent across teams.
+- To recolour a batch, multi-select the tasks and use **Apply colour to selected tasks** in the editor.
 - The legend was removed to reduce clutter. Use custom labels or documentation if you need to describe colour meanings.
 
 ---
@@ -151,3 +160,7 @@ For installation and deployment steps, see `README.md`.
 - Connect the API to persistent storage for multi-user environments.
 
 Happy scheduling!
+
+
+
+

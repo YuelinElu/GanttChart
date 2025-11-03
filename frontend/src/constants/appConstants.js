@@ -5,3 +5,9 @@ export const DATASET_OPTIONS = Object.freeze({
 });
 
 export const VIEW_MODES = Object.freeze(["Day", "Week", "Month"]);
+
+export const SORT_MODES = Object.freeze({
+  ORIGINAL: "original",
+  START: "start",
+  END: "end",
+});

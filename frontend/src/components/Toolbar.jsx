@@ -117,6 +117,7 @@ export default function Toolbar({
             </button>
           </div>
         </div>
+
       </div>
 
       <div className="toolbar__secondary">
