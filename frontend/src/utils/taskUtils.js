@@ -1,5 +1,7 @@
 import Papa from "papaparse";
 
+const CUSTOM_COLOR_KEY = "custom";
+
 const COLOR_PRESETS = [
   { key: "orange", label: "Orange", color: "#f5642d", outline: false },
   { key: "grey", label: "Grey", color: "#a9a9a9", outline: false },
@@ -364,18 +366,20 @@ export function resolveColorSpec(colorValue, colorLabel, outlineFlag) {
   }
 
   if (typeof colorValue === "string" && isValidHexColor(colorValue)) {
+    const normalised = normaliseHexColor(colorValue);
     return {
-      color: colorValue,
-      label: stringOrNull(colorLabel) ?? colorValue,
+      color: normalised ?? colorValue,
+      label: stringOrNull(colorLabel) ?? normalised ?? colorValue,
       outline: Boolean(outlineFlag),
       presetKey: null,
     };
   }
 
   if (typeof colorLabel === "string" && isValidHexColor(colorLabel)) {
+    const normalised = normaliseHexColor(colorLabel);
     return {
-      color: colorLabel,
-      label: colorLabel,
+      color: normalised ?? colorLabel,
+      label: normalised ?? colorLabel,
       outline: Boolean(outlineFlag),
       presetKey: null,
     };
@@ -453,17 +457,42 @@ export function createEditorDraftFromTask(task) {
   }
 
   const preset = findPresetForTask(task);
+  if (preset) {
+    return {
+      name: task.name,
+      start: toDateTimeLocal(task.start),
+      end: toDateTimeLocal(task.end),
+      colorMode: preset.key,
+      customColor: normaliseHexColor(task.color) ?? preset.color ?? DEFAULT_COLOR.color,
+    };
+  }
+
+  const customColour = normaliseHexColor(task.color) ?? DEFAULT_COLOR.color;
   return {
     name: task.name,
     start: toDateTimeLocal(task.start),
     end: toDateTimeLocal(task.end),
-    colorMode: preset ? preset.key : DEFAULT_COLOR.key,
+    colorMode: CUSTOM_COLOR_KEY,
+    customColor: customColour,
   };
 }
 
 export function buildColorSpecFromDraft(draft) {
   if (!draft) {
     return { error: "No task selected." };
+  }
+
+  if (draft.colorMode === CUSTOM_COLOR_KEY) {
+    const normalised = normaliseHexColor(draft.customColor);
+    if (!normalised) {
+      return { error: "Enter a valid hex colour like #1A3F5C." };
+    }
+    return {
+      color: normalised,
+      label: normalised,
+      outline: false,
+      presetKey: null,
+    };
   }
 
   const preset = getPresetByKey(draft.colorMode) ?? DEFAULT_COLOR;
@@ -478,6 +507,15 @@ export function buildColorSpecFromDraft(draft) {
 export function getDraftColorPreview(draft) {
   if (!draft) {
     return null;
+  }
+
+  if (draft.colorMode === CUSTOM_COLOR_KEY) {
+    const normalised = normaliseHexColor(draft.customColor);
+    return {
+      color: normalised ?? DEFAULT_COLOR.color,
+      label: normalised ?? "Custom colour",
+      outline: false,
+    };
   }
 
   return getPresetByKey(draft.colorMode) ?? DEFAULT_COLOR;
@@ -526,6 +564,40 @@ export function formatDateForFilename(date) {
   const hours = pad(date.getHours());
   const minutes = pad(date.getMinutes());
   return `${year}${month}${day}-${hours}${minutes}`;
+}
+
+export function sanitizeFilenameStem(value) {
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return "";
+  }
+
+  const withoutExtension = trimmed.replace(/\.csv$/i, "").trim();
+  if (!withoutExtension) {
+    return "";
+  }
+
+  const invalidPattern = /[<>:"/\\|?*\u0000-\u001F]/g;
+  const whitespacePattern = /\s+/g;
+
+  const sanitized = withoutExtension
+    .replace(invalidPattern, "-")
+    .replace(whitespacePattern, "-")
+    .replace(/-+/g, "-")
+    .replace(/^\.+/, "")
+    .replace(/\.+$/, "")
+    .replace(/^-+/, "")
+    .replace(/-+$/, "");
+
+  if (!sanitized) {
+    return "";
+  }
+
+  return sanitized.slice(0, 120);
 }
 
 export function generateTaskId() {
@@ -612,6 +684,35 @@ export function isValidHexColor(value) {
   return /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(value.trim());
 }
 
+export function normaliseHexColor(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  let trimmed = value.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  if (!trimmed.startsWith("#")) {
+    trimmed = `#${trimmed}`;
+  }
+
+  if (!isValidHexColor(trimmed)) {
+    return null;
+  }
+
+  let hex = trimmed.slice(1);
+  if (hex.length === 3) {
+    hex = hex
+      .split("")
+      .map((char) => char + char)
+      .join("");
+  }
+
+  return `#${hex.toUpperCase()}`;
+}
+
 export function pad(value) {
   return String(value).padStart(2, "0");
 }
@@ -671,4 +772,10 @@ function truncateLabel(value, maxLength = 28) {
   return value.length <= maxLength ? value : `${value.slice(0, maxLength - 3)}...`;
 }
 
-export { COLOR_PRESETS, DEFAULT_COLOR, DATE_FORMATTER, TIME_FORMATTER };
+export {
+  COLOR_PRESETS,
+  CUSTOM_COLOR_KEY,
+  DEFAULT_COLOR,
+  DATE_FORMATTER,
+  TIME_FORMATTER,
+};

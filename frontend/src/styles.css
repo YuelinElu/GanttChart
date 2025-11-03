@@ -659,6 +659,18 @@ code {
   font-weight: 600;
 }
 
+.editor__field--color {
+  gap: 0.6rem;
+}
+
+.editor__field-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
 .editor__input {
   border: 1px solid rgba(15, 23, 42, 0.14);
   border-radius: 0.75rem;
@@ -702,22 +714,26 @@ code {
 .editor__color {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: linear-gradient(135deg, rgba(241, 245, 249, 0.65), #ffffff);
+  box-shadow: inset 0 1px 1px rgba(15, 23, 42, 0.04);
 }
 
-.editor__color-row {
+.editor__color-summary {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .editor__color-preview {
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: 0.6rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.75rem;
   border: 2px solid rgba(15, 23, 42, 0.2);
-  box-shadow: 0 4px 12px -6px rgba(15, 23, 42, 0.55);
+  box-shadow: 0 8px 20px -12px rgba(15, 23, 42, 0.55);
 }
 
 .editor__color-preview--outline {
@@ -725,10 +741,112 @@ code {
   box-shadow: inset 0 0 0 2px currentColor;
 }
 
-.editor__color-label {
-  font-size: 0.85rem;
+.editor__color-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.editor__color-current-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.editor__color-current-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.editor__color-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.editor__color-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.08);
+  color: #1d4ed8;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.editor__color-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  align-items: flex-start;
+}
+
+.editor__color-select {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 12rem;
+}
+
+.editor__label {
+  font-size: 0.82rem;
   font-weight: 600;
   color: #475569;
+}
+
+.editor__custom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.editor__custom-color {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.editor__custom-color-picker {
+  width: 2.4rem;
+  height: 2.4rem;
+  border: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.editor__custom-color-picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border-radius: 0.75rem;
+}
+
+.editor__custom-color-picker::-webkit-color-swatch {
+  border-radius: 0.75rem;
+  border: 1px solid rgba(15, 23, 42, 0.2);
+}
+
+.editor__custom-color-picker::-moz-color-swatch {
+  border-radius: 0.75rem;
+  border: 1px solid rgba(15, 23, 42, 0.2);
+}
+
+.editor__input--custom {
+  max-width: 9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.editor__custom-hint {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #64748b;
 }
 
 .editor__actions {

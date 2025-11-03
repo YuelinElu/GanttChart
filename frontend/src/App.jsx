@@ -10,6 +10,7 @@ import ShiftModal from "./components/ShiftModal";
 import { DATASET_OPTIONS, VIEW_MODES, SORT_MODES } from "./constants/appConstants";
 import {
   COLOR_PRESETS,
+  CUSTOM_COLOR_KEY,
   DEFAULT_COLOR,
   buildColorSpecFromDraft,
   buildNewTaskName,
@@ -21,6 +22,7 @@ import {
   formatHumanDate,
   generateTaskId,
   getDraftColorPreview,
+  normaliseHexColor,
   parseDateTimeLocal,
   sortTasksByEnd,
   sortTasksByOriginalPosition,
@@ -28,6 +30,8 @@ import {
   toDateTimeLocal,
   reorderTasksById,
   escapeSelector,
+  stripCsvExtension,
+  sanitizeFilenameStem,
 } from "./utils/taskUtils";
 import {
   adjustSidebarWidth,
@@ -147,7 +151,14 @@ export default function App() {
   );
   const editorColorPreview = useMemo(() => getDraftColorPreview(editorDraft), [editorDraft]);
   const colorSelectValue =
-    editorDraft?.colorMode ?? selectedTask?.presetKey ?? DEFAULT_COLOR.key;
+    editorDraft?.colorMode ??
+    (selectedTask ? selectedTask.presetKey ?? CUSTOM_COLOR_KEY : DEFAULT_COLOR.key);
+  const customColorValue = editorDraft?.customColor ?? "";
+  const normalisedCustomColor = useMemo(
+    () => normaliseHexColor(customColorValue),
+    [customColorValue],
+  );
+  const isCustomMode = editorDraft?.colorMode === CUSTOM_COLOR_KEY;
   const totalTaskCount = tasks.length;
   const selectedCount = selectedTaskIds.length;
   const hasTasks = tasks.length > 0;
@@ -162,6 +173,23 @@ export default function App() {
     }
     return end.getTime() < start.getTime();
   }, [editorDraft]);
+  const customColorError = useMemo(() => {
+    if (!isCustomMode) {
+      return "";
+    }
+    return normalisedCustomColor ? "" : "Enter a valid hex colour like #1A3F5C.";
+  }, [isCustomMode, normalisedCustomColor]);
+  const customColorPickerValue = normalisedCustomColor ?? DEFAULT_COLOR.color;
+  const colorOptions = useMemo(
+    () => [
+      ...COLOR_PRESETS,
+      { key: CUSTOM_COLOR_KEY, label: "Custom", color: customColorPickerValue, outline: false },
+    ],
+    [customColorPickerValue],
+  );
+  const disableSubmit = editorDatesInvalid || (isCustomMode && Boolean(customColorError));
+  const hasSelection = selectedTaskIds.length > 0;
+  const applyColorDisabled = !hasSelection || (isCustomMode && Boolean(customColorError));
   const searchStatus = searchMatches.length
     ? `${searchIndex >= 0 ? searchIndex + 1 : 0} / ${searchMatches.length}`
     : "0 / 0";
@@ -917,6 +945,7 @@ export default function App() {
         start: toDateTimeLocal(startDate),
         end: toDateTimeLocal(endDate),
         colorMode: DEFAULT_COLOR.key,
+        customColor: DEFAULT_COLOR.color,
       };
       setPendingNewTask({
         insertIndex,
@@ -996,23 +1025,57 @@ export default function App() {
     }
   }, []);
 
-  const handleColorModeChange = useCallback((event) => {
-    const value = event.target.value;
-    const preset = COLOR_PRESETS.find((item) => item.key === value) ?? DEFAULT_COLOR;
-    setEditorDraft((prev) => {
-      if (!prev) {
-        return prev;
+  const handleColorModeChange = useCallback(
+    (event) => {
+      const value = event.target.value;
+      if (value === CUSTOM_COLOR_KEY) {
+        setEditorDraft((prev) => {
+          if (!prev) {
+            return prev;
+          }
+          const fromDraft =
+            typeof prev.customColor === "string" && prev.customColor.trim()
+              ? prev.customColor.trim()
+              : null;
+          const fromTask =
+            selectedTask && typeof selectedTask.color === "string"
+              ? selectedTask.color.trim()
+              : null;
+          const fallback =
+            fromDraft ||
+            (fromTask && fromTask.startsWith("#") ? fromTask : null) ||
+            DEFAULT_COLOR.color;
+          return {
+            ...prev,
+            colorMode: CUSTOM_COLOR_KEY,
+            customColor: fallback,
+          };
+        });
+        setEditorError("");
+        return;
       }
-      return {
-        ...prev,
-        colorMode: preset.key,
-      };
-    });
-    setEditorError("");
-  }, []);
+
+      const preset = COLOR_PRESETS.find((item) => item.key === value) ?? DEFAULT_COLOR;
+      setEditorDraft((prev) => {
+        if (!prev) {
+          return prev;
+        }
+        return {
+          ...prev,
+          colorMode: preset.key,
+        };
+      });
+      setEditorError("");
+    },
+    [selectedTask],
+  );
 
   const handleApplyColorToSelection = useCallback(() => {
     if (!editorDraft) {
+      return;
+    }
+    if (editorDraft.colorMode === CUSTOM_COLOR_KEY && customColorError) {
+      setEditorError(customColorError);
       return;
     }
     const colorSpec = buildColorSpecFromDraft(editorDraft);
@@ -1047,9 +1110,11 @@ export default function App() {
   }, [
     currentSortMutationMode,
     editorDraft,
+    customColorError,
     mutateTasks,
     selectedTaskId,
     selectedTaskIds,
+    setEditorError,
   ]);
 
   const handleEditorReset = useCallback(() => {
@@ -1058,12 +1123,13 @@ export default function App() {
       const endDate =
         coerceToDate(pendingNewTask.baselineEnd) ??
         new Date(startDate.getTime() + DEFAULT_TASK_DURATION_MS);
-      setEditorDraft({
-        name: buildNewTaskName(tasks.length + 1),
-        start: toDateTimeLocal(startDate),
-        end: toDateTimeLocal(endDate),
-        colorMode: DEFAULT_COLOR.key,
-      });
+        setEditorDraft({
+          name: buildNewTaskName(tasks.length + 1),
+          start: toDateTimeLocal(startDate),
+          end: toDateTimeLocal(endDate),
+          colorMode: DEFAULT_COLOR.key,
+          customColor: DEFAULT_COLOR.color,
+        });
       setEditorError("");
       return;
     }
@@ -1095,6 +1161,10 @@ export default function App() {
       }
       if (editorDatesInvalid || endDate.getTime() < startDate.getTime()) {
         setEditorError(DATE_ERROR_MESSAGE);
+        return;
+      }
+      if (editorDraft.colorMode === CUSTOM_COLOR_KEY && customColorError) {
+        setEditorError(customColorError);
         return;
       }
 
@@ -1183,6 +1253,7 @@ export default function App() {
       currentSortMutationMode,
       editorDatesInvalid,
       editorDraft,
+      customColorError,
       getNextOriginalPosition,
       mutateTasks,
       pendingNewTask,
@@ -1196,15 +1267,45 @@ export default function App() {
     if (!snapshot) {
       return;
     }
+
+    const defaultStem = stripCsvExtension(snapshot.filename);
+    let chosenStem = defaultStem;
+
+    try {
+      const userInput = window.prompt(
+        "Name this export (the .csv extension is added automatically):",
+        defaultStem,
+      );
+
+      if (userInput === null) {
+        return;
+      }
+
+      if (typeof userInput === "string") {
+        const sanitized = sanitizeFilenameStem(userInput);
+        if (sanitized) {
+          chosenStem = sanitized;
+        } else if (userInput.trim()) {
+          // If input contained only invalid characters, keep the default stem.
+          chosenStem = defaultStem;
+        } else {
+          chosenStem = defaultStem;
+        }
+      }
+    } catch {
+      chosenStem = defaultStem;
+    }
+
+    const filename = `${chosenStem || defaultStem}.csv`;
     const blob = new Blob([snapshot.csvContent], { type: "text/csv;charset=utf-8" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = snapshot.filename;
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(link.href);
-  }, [exportTasks]);
+  }, [exportTasks, sanitizeFilenameStem, stripCsvExtension]);
 
   const handleSearchChange = useCallback((event) => {
     setSearchQuery(event.target.value);
@@ -1566,19 +1667,24 @@ export default function App() {
             onToggleCollapse={() => setIsEditorCollapsed((prev) => !prev)}
             onDelete={handleDeleteTask}
             onDiscardNew={discardPendingNewTask}
-            onSubmit={handleEditorSubmit}
+          onSubmit={handleEditorSubmit}
           onReset={handleEditorReset}
           draft={editorDraft}
           onFieldChange={handleEditorFieldChange}
           onColorModeChange={handleColorModeChange}
           colorSelectValue={String(colorSelectValue)}
-          colorPresets={COLOR_PRESETS}
+          colorPresets={colorOptions}
           colorPreview={editorColorPreview}
+          customColorKey={CUSTOM_COLOR_KEY}
+          customColorValue={customColorValue}
+          customColorPickerValue={customColorPickerValue}
+          customColorError={customColorError}
           isDateInvalid={editorDatesInvalid}
           dateErrorMessage={DATE_ERROR_MESSAGE}
-          disableSubmit={editorDatesInvalid}
+          disableSubmit={disableSubmit}
           editorError={editorError}
-          canApplyColorToSelection={selectedTaskIds.length > 0}
+          canApplyColorToSelection={hasSelection}
+          applyColorDisabled={applyColorDisabled}
           onApplyColorToSelection={handleApplyColorToSelection}
         />
           <div className="gantt-wrapper">

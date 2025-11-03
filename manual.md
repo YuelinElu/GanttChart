@@ -51,7 +51,7 @@ For installation and deployment steps, see `README.md`.
   3. The chart refreshes immediately and the dataset selector jumps to “Show uploaded”.
 
 - **Export CSV**
-  - Click **Export** to download the current timeline (including edits). Filenames include a timestamp or the uploaded file name.
+  - Click **Export** to download the current timeline (including edits). You can rename the file in the prompt before the `.csv` saves locally (leave it blank to keep the suggested name).
 - **Sort dropdown**
   - *Original order*: restores the source file order (newly created tasks appear at the end).
   - *Start date*: keeps the earliest start at the top; the list reflows automatically after relevant edits.
@@ -88,8 +88,8 @@ For installation and deployment steps, see `README.md`.
 2. Update **Name**, **Start**, **End** (minute resolution).
    - Inline validation highlights invalid ranges and disables **Save changes** until Start and End make sense.
 3. Choose a colour:
-   - Preset palette entries (Orange, Grey, Black, Black Outline).
-   - Multi-select a set of tasks and click **Apply colour to selected tasks** to push the current colour/outline to all of them at once.
+   - Preset palette entries (Orange, Grey, Black, Black Outline), or switch to **Custom** to use the colour picker or enter any hex value (`#RRGGBB`). The custom field validates the format before you can save.
+   - Multi-select a set of tasks and click **Apply colour to selected tasks** to push the current colour/outline to all of them at once (the button stays disabled until the custom colour is valid).
 4. Use **Save changes** to persist, or **Reset** to restore the last saved state.
 5. Collapse the panel with the toggle in the header when you want maximum Gantt space.
 
@@ -128,7 +128,7 @@ For installation and deployment steps, see `README.md`.
   - Grey -> `#a9a9a9`
   - Black -> `#000000`
   - Black Outline -> `#000000` (drawn as an outline-only bar)
-- Custom hex values are intentionally disabled to keep the palette consistent across teams.
+- Custom hex values are supported via the editor's **Custom** option; they export and re-import exactly as typed. Invalid values fall back to Orange so bars always render.
 - To recolour a batch, multi-select the tasks and use **Apply colour to selected tasks** in the editor.
 - The legend was removed to reduce clutter. Use custom labels or documentation if you need to describe colour meanings.
 
