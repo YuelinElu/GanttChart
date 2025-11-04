@@ -4,6 +4,17 @@ Interactive Gantt Chart (FastAPI + React)
 Visualise the tasks stored in `data/data.csv` with a modern, interactive Gantt chart.  
 The backend (FastAPI) serves the CSV as JSON, while the frontend (React + Vite + frappe-gantt) renders a polished timeline with colour-coded bars and rich tooltips.
 
+Tech stack
+----------
+
+- **FastAPI** with **Uvicorn** serving JSON APIs and static assets
+- **Pandas** for CSV parsing and time/duration calculations
+- **Pydantic** for response models and validation
+- **React 18** bootstrapped with **Vite**
+- **frappe-gantt** for the interactive chart visualisation
+- **Papa Parse** for client-side CSV import/export
+- **Sass (dart-sass embedded)** for styling enhancements on top of the chart library
+
 
 Dataset expectations
 --------------------
