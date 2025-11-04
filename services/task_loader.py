@@ -35,6 +35,7 @@ class TaskRecord:
 
     id: str
     name: str
+    position: int
     start: str
     end: str
     color: str
@@ -52,6 +53,7 @@ class TaskRecord:
         return {
             "id": self.id,
             "name": self.name,
+            "position": self.position,
             "start": self.start,
             "end": self.end,
             "color": self.color,
@@ -106,6 +108,7 @@ def load_tasks() -> List[Dict[str, Any]]:
         record = TaskRecord(
             id=f"task-{index}",
             name=name,
+            position=index,
             start=start.isoformat(),
             end=end.isoformat(),
             color=color_value,
@@ -119,8 +122,6 @@ def load_tasks() -> List[Dict[str, Any]]:
         )
 
         records.append(record)
-
-    records.sort(key=lambda rec: rec.start)
 
     return [record.as_dict() for record in records]
 
