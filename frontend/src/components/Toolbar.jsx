@@ -52,10 +52,12 @@ export default function Toolbar({
             value={datasetMode}
             onChange={onDatasetChange}
           >
-            <option value={DATASET_OPTIONS.DEFAULT}>Show default (data/data.csv)</option>
-            <option value={DATASET_OPTIONS.EMPTY}>Show empty</option>
+            <option value={DATASET_OPTIONS.DEFAULT}>Sample project plan</option>
+            <option value={DATASET_OPTIONS.EMPTY}>Start from scratch</option>
             <option value={DATASET_OPTIONS.UPLOADED}>
-              {hasUploadedData && uploadedName ? `Show uploaded (${uploadedName})` : "Show uploaded"}
+              {hasUploadedData && uploadedName
+                ? `Uploaded CSV (${uploadedName})`
+                : "Uploaded CSV"}
             </option>
           </select>
           <div className="toolbar__inline-actions">
