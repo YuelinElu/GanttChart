@@ -18,6 +18,9 @@ frontend/node_modules/
 frontend/dist/
 frontend/.vite/
 
+# Project data (local/private)
+data/data.csv
+
 # OS metadata
 .DS_Store
 Thumbs.db

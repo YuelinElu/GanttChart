@@ -15,6 +15,9 @@ import {
 
 const HISTORY_LIMIT = 100;
 
+const STATIC_DATASET_URL =
+  import.meta.env.VITE_DEFAULT_DATASET_URL || `${import.meta.env.BASE_URL}default-data.csv`;
+
 /**
  * Centralised task management hook that encapsulates dataset switching,
  * undo/redo stacks, CSV import/export, and shared task mutation helpers.
@@ -87,22 +90,68 @@ export default function useTaskManager(apiBaseUrl) {
     const controller = new AbortController();
 
     async function fetchDefaultTasks() {
+      setLoading(true);
+      setError("");
+
       try {
-        setLoading(true);
-        setError("");
-        const response = await fetch(`${apiBaseUrl}/api/tasks`, { signal: controller.signal });
-        if (!response.ok) {
-          throw new Error(`Fetch failed (${response.status})`);
+        if (apiBaseUrl) {
+          const response = await fetch(`${apiBaseUrl}/api/tasks`, { signal: controller.signal });
+          if (!response.ok) {
+            throw new Error(`Fetch failed (${response.status})`);
+          }
+          const payload = await response.json();
+          replaceDatasetTasks(DATASET_OPTIONS.DEFAULT, payload, { resetStacks: true });
+          return;
         }
-        const payload = await response.json();
-        replaceDatasetTasks(DATASET_OPTIONS.DEFAULT, payload, { resetStacks: true });
+        throw new Error("Missing API base URL");
       } catch (fetchError) {
-        if (fetchError?.name !== "AbortError") {
-          setError("Unable to load tasks. Check that the API is running.");
-          replaceDatasetTasks(DATASET_OPTIONS.DEFAULT, [], { resetStacks: true });
+        if (fetchError?.name === "AbortError") {
+          return;
         }
+
+        let fallback = null;
+        try {
+          fallback = await loadBundledDataset(controller.signal);
+        } catch (fallbackError) {
+          if (fallbackError?.name === "AbortError") {
+            return;
+          }
+        }
+        if (fallback) {
+          replaceDatasetTasks(DATASET_OPTIONS.DEFAULT, fallback, { resetStacks: true });
+          setError("");
+          return;
+        }
+
+        setError("Unable to load tasks. Check that the API is running.");
+        replaceDatasetTasks(DATASET_OPTIONS.DEFAULT, [], { resetStacks: true });
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    async function loadBundledDataset(signal) {
+      if (!STATIC_DATASET_URL) {
+        return null;
+      }
+      try {
+        const response = await fetch(STATIC_DATASET_URL, { signal });
+        if (!response.ok) {
+          return null;
+        }
+        const csvText = await response.text();
+        const parsed = Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+        });
+        return convertCsvRowsToTasks(parsed?.data ?? []);
+      } catch (error) {
+        if (error?.name === "AbortError") {
+          throw error;
+        }
+        return null;
       }
     }
 

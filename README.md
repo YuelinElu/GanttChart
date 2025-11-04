@@ -20,6 +20,8 @@ The CSV must be UTF-8 encoded and include the following columns:
 
 Rows with missing or invalid dates are skipped so remaining tasks can still load.
 
+> **Note:** The file `data/data.csv` is intentionally git-ignored so you can keep production datasets private. Create or copy your own CSV to that path when running the FastAPI backend locally.
+
 Colour palette
 --------------
 
@@ -112,6 +114,13 @@ npm run build
 ```
 
 This generates `frontend/dist/`. Restart the backend (`uvicorn app:app --port 8000`) and open `http://localhost:8000/`. FastAPI automatically mounts the built bundle when it detects that directory.
+
+Static hosting (GitHub Pages)
+-----------------------------
+
+- The React build now falls back to an anonymised sample CSV at `frontend/public/default-data.csv` whenever `/api/tasks` is unreachable. This keeps the chart populated even when the FastAPI service is offline without exposing private data.
+- Replace that CSV locally (and commit only if the contents are safe to share) whenever you want the static site to reflect new baseline data.
+- When you do host the API, add a repository variable or secret named `FRONTEND_API_BASE_URL`; the Pages workflow will inject it as `VITE_API_BASE_URL` so the front end switches back to live data.
 
 
 Features implemented
